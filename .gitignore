@@ -1,0 +1,11 @@
+# Build output
+surose-os
+
+# SSH private key (.ssh/id_ed25519.pub is committed)
+.ssh/id_ed25519
+
+# Claude local config
+.claude/
+
+# macOS
+.DS_Store
