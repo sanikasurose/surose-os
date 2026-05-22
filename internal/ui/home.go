@@ -14,8 +14,9 @@ var homeItems = []struct {
 	label string
 }{
 	{"1", "projects"},
-	{"2", "about"},
-	{"3", "contact"},
+	{"2", "experience"},
+	{"3", "about"},
+	{"4", "contact"},
 }
 
 func NewHomeModel() HomeModel { return HomeModel{} }

@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -15,6 +14,7 @@ const (
 	screenHome
 	screenProjects
 	screenProjectDetail
+	screenExperience
 	screenAbout
 	screenContact
 )
@@ -29,6 +29,7 @@ type RootModel struct {
 	home          HomeModel
 	projects      ProjectsModel
 	projectDetail ProjectDetailModel
+	experience    ExperienceModel
 	about         AboutModel
 	contact       ContactModel
 
@@ -39,12 +40,13 @@ type RootModel struct {
 
 func NewRootModel() RootModel {
 	return RootModel{
-		current:  screenBoot,
-		boot:     NewBootModel(),
-		home:     NewHomeModel(),
-		projects: NewProjectsModel(),
-		about:    NewAboutModel(),
-		contact:  NewContactModel(),
+		current:    screenBoot,
+		boot:       NewBootModel(),
+		home:       NewHomeModel(),
+		projects:   NewProjectsModel(),
+		experience: NewExperienceModel(),
+		about:      NewAboutModel(),
+		contact:    NewContactModel(),
 	}
 }
 
@@ -69,17 +71,14 @@ func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case tea.KeyMsg:
-		// Prompt is focused — route all keys there.
 		if m.promptFocused {
 			return m.updatePrompt(msg)
 		}
 
-		// Global quit.
 		if msg.String() == "ctrl+c" {
 			return m, tea.Quit
 		}
 
-		// `:` opens the prompt from any screen.
 		if msg.String() == ":" {
 			m.promptFocused = true
 			m.promptInput = ""
@@ -87,7 +86,6 @@ func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 
-		// Delegate to active screen.
 		return m.updateScreen(msg)
 	}
 
@@ -108,16 +106,20 @@ func (m RootModel) updateScreen(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		case "1":
 			m.current = screenProjects
 		case "2":
-			m.current = screenAbout
+			m.current = screenExperience
 		case "3":
+			m.current = screenAbout
+		case "4":
 			m.current = screenContact
 		case "enter", " ":
 			switch m.home.Selected() {
 			case 0:
 				m.current = screenProjects
 			case 1:
-				m.current = screenAbout
+				m.current = screenExperience
 			case 2:
+				m.current = screenAbout
+			case 3:
 				m.current = screenContact
 			}
 		}
@@ -144,6 +146,16 @@ func (m RootModel) updateScreen(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.projectDetail = m.projectDetail.ScrollDown()
 		case "up", "k":
 			m.projectDetail = m.projectDetail.ScrollUp()
+		}
+
+	case screenExperience:
+		switch msg.String() {
+		case "q", "esc":
+			m.current = screenHome
+		case "down", "j":
+			m.experience = m.experience.ScrollDown()
+		case "up", "k":
+			m.experience = m.experience.ScrollUp()
 		}
 
 	case screenAbout:
@@ -175,13 +187,10 @@ func (m RootModel) updatePrompt(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case tea.KeyEnter:
-		cmd := strings.TrimSpace(m.promptInput)
-		m.promptOutput = m.execPromptCmd(cmd)
+		raw := strings.TrimSpace(m.promptInput)
 		m.promptInput = ""
-		if cmd == "quit" || cmd == "exit" {
-			return m, tea.Quit
-		}
-		return m, nil
+		m, cmd := m.execPromptCmd(raw)
+		return m, cmd
 
 	case tea.KeyBackspace, tea.KeyDelete:
 		if len(m.promptInput) > 0 {
@@ -197,26 +206,64 @@ func (m RootModel) updatePrompt(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// execPromptCmd handles whitelisted commands. Phase 1: only help and quit.
-func (m RootModel) execPromptCmd(cmd string) string {
-	switch cmd {
-	case "help":
-		return "commands: help · projects · about · contact · open <slug> · clear · quit"
-	case "quit", "exit":
-		return "goodbye."
-	case "projects":
-		return "(navigation coming in phase 2)"
-	case "about":
-		return "(navigation coming in phase 2)"
-	case "contact":
-		return "(navigation coming in phase 2)"
-	case "clear":
-		return ""
-	case "":
-		return ""
-	default:
-		return fmt.Sprintf("unknown command. type help for a list.")
+// execPromptCmd handles all hisanika> commands. Returns an updated model and
+// an optional tea.Cmd (nil unless quitting).
+func (m RootModel) execPromptCmd(input string) (RootModel, tea.Cmd) {
+	if input == "" {
+		m.promptOutput = ""
+		return m, nil
 	}
+
+	// Handle "open <slug>" separately.
+	if strings.HasPrefix(input, "open") {
+		parts := strings.Fields(input)
+		if len(parts) < 2 {
+			m.promptOutput = "usage: open <slug>"
+			return m, nil
+		}
+		slug := parts[1]
+		for _, p := range content.Projects {
+			if p.Slug == slug {
+				m.projectDetail = NewProjectDetailModel(p)
+				m.current = screenProjectDetail
+				m.promptFocused = false
+				m.promptOutput = ""
+				return m, nil
+			}
+		}
+		m.promptOutput = "project not found. type projects to browse."
+		return m, nil
+	}
+
+	switch input {
+	case "help":
+		m.promptOutput = "commands: help · projects · experience · about · contact · open <slug> · clear · quit"
+	case "projects":
+		m.current = screenProjects
+		m.promptFocused = false
+		m.promptOutput = ""
+	case "experience":
+		m.current = screenExperience
+		m.promptFocused = false
+		m.promptOutput = ""
+	case "about":
+		m.current = screenAbout
+		m.promptFocused = false
+		m.promptOutput = ""
+	case "contact":
+		m.current = screenContact
+		m.promptFocused = false
+		m.promptOutput = ""
+	case "clear":
+		m.promptOutput = ""
+	case "quit", "exit":
+		m.promptOutput = "goodbye."
+		return m, tea.Quit
+	default:
+		m.promptOutput = "unknown command. type help for a list."
+	}
+
+	return m, nil
 }
 
 func (m RootModel) View() string {
@@ -232,15 +279,15 @@ func (m RootModel) View() string {
 		body = m.projects.View(m.width)
 	case screenProjectDetail:
 		body = m.projectDetail.View(m.width, m.height)
+	case screenExperience:
+		body = m.experience.View(m.width, m.height)
 	case screenAbout:
 		body = m.about.View(m.width, m.height)
 	case screenContact:
 		body = m.contact.View(m.width)
 	}
 
-	prompt := m.renderPrompt()
-
-	return body + "\n" + prompt
+	return body + "\n" + m.renderPrompt()
 }
 
 func (m RootModel) renderPrompt() string {
@@ -253,7 +300,7 @@ func (m RootModel) renderPrompt() string {
 
 	if m.promptFocused {
 		sb.WriteString(PromptInput.Render(m.promptInput))
-		sb.WriteString(AccentText.Render("█")) // block cursor
+		sb.WriteString(AccentText.Render("█"))
 	} else {
 		sb.WriteString(GhostText.Render("press : to type a command"))
 	}

@@ -1,57 +1,35 @@
-package content
+# Surose OS — Content Reference
 
-type Project struct {
-	Title     string
-	Slug      string
-	Year      string
-	Category  string // "hackathon" or "personal"
-	Tags      []string
-	ShortDesc string
-	LongDesc  string // Markdown, rendered by Glamour
-	Links     []Link
-	Event     string
-	Location  string
-}
+This file contains all portfolio content for Sanika Surose.
+The coding agent reads this file before writing or updating `internal/content/data.go`.
+No content should be hardcoded in UI files — everything lives in data.go, sourced from here.
 
-type Link struct {
-	Label string
-	URL   string
-}
+---
 
-// ExperienceEntry represents either a work role or a hackathon appearance.
-type ExperienceEntry struct {
-	Kind        string // "work" or "hackathon"
-	Title       string // job title or event name
-	Org         string // company or institution
-	Location    string
-	Dates       string
-	Bullets     []string // work roles only
-	Project     string   // hackathon only — project name
-	Brief       string   // hackathon only — one-sentence description
-}
+## Projects
 
-type ContactInfo struct {
-	Email    string
-	LinkedIn string
-	GitHub   string
-	Note     string
-}
+All projects have a Category field: `hackathon` or `personal`.
+Projects must appear in the exact order listed below within each category.
 
-// Projects is the master list. Hackathons first (CLAIRITY → SeamSecure → Piratech → VeriHire),
-// then personal projects in display order.
-var Projects = []Project{
-	// ── Hackathons ────────────────────────────────────────────────────────────
-	{
-		Title:     "CLAIRITY",
-		Slug:      "clairity",
-		Year:      "2026",
-		Category:  "hackathon",
-		Event:     "DeltaHacks 12",
-		Location:  "McMaster University, Hamilton, ON",
-		Tags:      []string{"Python", "Swift", "LLMs", "OCR", "iOS"},
-		ShortDesc: "AI-powered iOS app that translates complex medical and institutional language into clear, actionable next steps.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/syaanmerchant/clAIrity"}},
-		LongDesc: `## CLAIRITY
+---
+
+### Hackathon Projects
+Display order: CLAIRITY → SeamSecure → Piratech → VeriHire
+
+---
+
+#### CLAIRITY
+- **Slug:** `clairity`
+- **Year:** 2026
+- **Category:** hackathon
+- **Event:** DeltaHacks 12
+- **Location:** McMaster University, Hamilton, ON
+- **Tags:** Python, Swift, LLMs, OCR, iOS
+- **Short description:** AI-powered iOS app that translates complex medical and institutional language into clear, actionable next steps.
+- **GitHub:** github.com/syaanmerchant/clAIrity
+- **Long description (Markdown):**
+```markdown
+## CLAIRITY
 
 Built at **DeltaHacks 12** at McMaster University.
 
@@ -68,19 +46,22 @@ high-stakes interactions like ER discharge instructions or insurance documents.
 
 ### Stack
 Python · Swift · LLMs · OCR · Clinical NLP · iOS
-`,
-	},
-	{
-		Title:     "SeamSecure",
-		Slug:      "seamsecure",
-		Year:      "2026",
-		Category:  "hackathon",
-		Event:     "ElleHacks 2026",
-		Location:  "York University, Toronto, ON",
-		Tags:      []string{"Python", "FastAPI", "React", "TypeScript", "Google Gemini", "OAuth"},
-		ShortDesc: "AI-powered platform that detects conversation hijacking and email thread compromise using hybrid rule-based and LLM analysis.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/SeamSecure/SeamSecure"}},
-		LongDesc: `## SeamSecure
+```
+
+---
+
+#### SeamSecure
+- **Slug:** `seamsecure`
+- **Year:** 2026
+- **Category:** hackathon
+- **Event:** ElleHacks 2026
+- **Location:** York University, Toronto, ON
+- **Tags:** Python, FastAPI, React, TypeScript, Google Gemini, OAuth
+- **Short description:** AI-powered platform that detects conversation hijacking and email thread compromise using hybrid rule-based and LLM analysis.
+- **GitHub:** github.com/SeamSecure/SeamSecure
+- **Long description (Markdown):**
+```markdown
+## SeamSecure
 
 Built at **ElleHacks 2026** at York University.
 
@@ -97,19 +78,22 @@ that happen inside ongoing conversations between people who already trust each o
 
 ### Stack
 Python · FastAPI · React · TypeScript · Tailwind CSS · Google Gemini · OAuth 2.0
-`,
-	},
-	{
-		Title:     "Piratech",
-		Slug:      "piratech",
-		Year:      "2026",
-		Category:  "hackathon",
-		Event:     "Hacktech 2026",
-		Location:  "California Institute of Technology, Los Angeles, CA",
-		Tags:      []string{"Python", "FastAPI", "WebSockets", "Semgrep", "LLMs", "React", "Vite"},
-		ShortDesc: "AI-powered security analysis platform for automated vulnerability detection and real-time code analysis.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/bebopkenny/hacktech2026part2"}},
-		LongDesc: `## Piratech
+```
+
+---
+
+#### Piratech
+- **Slug:** `piratech`
+- **Year:** 2026
+- **Category:** hackathon
+- **Event:** Hacktech 2026
+- **Location:** California Institute of Technology, Los Angeles, CA
+- **Tags:** Python, FastAPI, WebSockets, Semgrep, LLMs, React, Vite
+- **Short description:** AI-powered security analysis platform for automated vulnerability detection and real-time code analysis.
+- **GitHub:** github.com/bebopkenny/hacktech2026part2
+- **Long description (Markdown):**
+```markdown
+## Piratech
 
 Built at **Hacktech 2026** at the California Institute of Technology.
 
@@ -127,19 +111,22 @@ way a senior security engineer would and explains exactly how each vulnerability
 
 ### Stack
 Python · FastAPI · WebSockets · Semgrep · React · Vite · Backboard · Vultr
-`,
-	},
-	{
-		Title:     "VeriHire",
-		Slug:      "verihire",
-		Year:      "2026",
-		Category:  "hackathon",
-		Event:     "Midnight Hackathon 2026",
-		Location:  "Online",
-		Tags:      []string{"Python", "FastAPI", "Next.js", "TypeScript", "PostgreSQL", "Docker", "Google Gemini", "Zero-Knowledge Proofs"},
-		ShortDesc: "Privacy-first hiring verification platform — candidates prove qualifications without exposing their documents.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/midnight-hackathon"}},
-		LongDesc: `## VeriHire
+```
+
+---
+
+#### VeriHire
+- **Slug:** `verihire`
+- **Year:** 2026
+- **Category:** hackathon
+- **Event:** Midnight Hackathon 2026
+- **Location:** Online
+- **Tags:** Python, FastAPI, Next.js, TypeScript, PostgreSQL, Docker, Google Gemini, Zero-Knowledge Proofs
+- **Short description:** Privacy-first hiring verification platform — candidates prove qualifications without exposing their documents.
+- **GitHub:** github.com/sanikasurose/midnight-hackathon
+- **Long description (Markdown):**
+```markdown
+## VeriHire
 
 Built at **Midnight Hackathon 2026** (online).
 
@@ -160,19 +147,25 @@ Backend Lead — owned the API layer, document processing pipeline, database sch
 
 ### Stack
 Python · FastAPI · SQLAlchemy · PostgreSQL · Next.js · TypeScript · Tailwind CSS · Google Gemini · Midnight / ZK Proofs · Docker
-`,
-	},
+```
 
-	// ── Personal Projects ─────────────────────────────────────────────────────
-	{
-		Title:     "Typing Test",
-		Slug:      "typing-test",
-		Year:      "2024",
-		Category:  "personal",
-		Tags:      []string{"Python", "CustomTkinter", "GUI"},
-		ShortDesc: "Feature-rich graphical typing trainer with real-time analytics, session history, and per-character feedback.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/typing-test"}},
-		LongDesc: `## Typing Test
+---
+
+### Personal Projects
+Display order: typing-test → outreach-research-scraper → neurosnake-rl → sanika-ui → throttle → pulp → committr → surose-os
+
+---
+
+#### Typing Test
+- **Slug:** `typing-test`
+- **Year:** 2024
+- **Category:** personal
+- **Tags:** Python, CustomTkinter, GUI
+- **Short description:** Feature-rich graphical typing trainer with real-time analytics, session history, and per-character feedback.
+- **GitHub:** github.com/sanikasurose/typing-test
+- **Long description (Markdown):**
+```markdown
+## Typing Test
 
 A fully-featured graphical typing trainer built with Python and CustomTkinter.
 Migrated from a terminal-based v1 into a multi-screen GUI with persistent session tracking.
@@ -188,17 +181,20 @@ Migrated from a terminal-based v1 into a multi-screen GUI with persistent sessio
 
 ### Stack
 Python · CustomTkinter · Session analytics · Modular GUI architecture
-`,
-	},
-	{
-		Title:     "Outreach Research Scraper",
-		Slug:      "outreach-research-scraper",
-		Year:      "2025",
-		Category:  "personal",
-		Tags:      []string{"Python", "Web Scraping", "NLP", "CLI"},
-		ShortDesc: "CLI tool that crawls university faculty pages and produces clean summaries of professor research interests and undergraduate opportunities.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/academic-research-scraper"}},
-		LongDesc: `## Outreach Research Scraper
+```
+
+---
+
+#### Outreach Research Scraper
+- **Slug:** `outreach-research-scraper`
+- **Year:** 2025
+- **Category:** personal
+- **Tags:** Python, Web Scraping, NLP, CLI
+- **Short description:** CLI tool that crawls university faculty pages and produces clean summaries of professor research interests and undergraduate opportunities.
+- **GitHub:** github.com/sanikasurose/academic-research-scraper
+- **Long description (Markdown):**
+```markdown
+## Outreach Research Scraper
 
 A Python CLI tool for academic research discovery. Crawls university faculty pages
 and produces clean, human-readable summaries of professor research interests,
@@ -210,19 +206,27 @@ recent publications, and undergraduate research opportunities.
 - Dual output: Markdown summaries for human review + JSON for further processing
 - Fully unit-tested formatting layer
 
+### Usage
+```bash
+python main.py input/professor_urls.txt output/
+```
+
 ### Stack
 Python · Web scraping · NLP · CLI · Unit testing
-`,
-	},
-	{
-		Title:     "neurosnake-rl",
-		Slug:      "neurosnake-rl",
-		Year:      "2026",
-		Category:  "personal",
-		Tags:      []string{"Python", "PyTorch", "Deep Q-Learning", "SQLite", "CNN", "Reinforcement Learning"},
-		ShortDesc: "End-to-end reinforcement learning pipeline — CNN-based DQN agent trained to play Snake, with full experiment tracking infrastructure.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/neurosnake-rl"}},
-		LongDesc: `## neurosnake-rl
+```
+
+---
+
+#### neurosnake-rl
+- **Slug:** `neurosnake-rl`
+- **Year:** 2026
+- **Category:** personal
+- **Tags:** Python, PyTorch, Deep Q-Learning, SQLite, CNN, Reinforcement Learning
+- **Short description:** End-to-end reinforcement learning pipeline — CNN-based DQN agent trained to play Snake, with full experiment tracking infrastructure.
+- **GitHub:** github.com/sanikasurose/neurosnake-rl
+- **Long description (Markdown):**
+```markdown
+## neurosnake-rl
 
 Started as a Snake game. Became a full reinforcement learning research pipeline.
 
@@ -245,17 +249,20 @@ experiment tracking, and structured evaluation. This project builds all of that 
 
 ### Stack
 Python · PyTorch · NumPy · SQLite · Matplotlib · CNN · Double DQN
-`,
-	},
-	{
-		Title:     "Sanika-UI",
-		Slug:      "sanika-ui",
-		Year:      "2025",
-		Category:  "personal",
-		Tags:      []string{"React", "TypeScript", "CSS Variables", "Component Library", "Design Systems"},
-		ShortDesc: "Lightweight React UI component library exploring reusable component architecture and theme systems.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/sanika-ui"}},
-		LongDesc: `## Sanika-UI
+```
+
+---
+
+#### Sanika-UI
+- **Slug:** `sanika-ui`
+- **Year:** 2025
+- **Category:** personal
+- **Tags:** React, TypeScript, CSS Variables, Component Library, Design Systems
+- **Short description:** Lightweight React UI component library exploring reusable component architecture and theme systems.
+- **GitHub:** github.com/sanikasurose/sanika-ui
+- **Long description (Markdown):**
+```markdown
+## Sanika-UI
 
 A lightweight React component library built to understand how design systems work
 from the inside — not just how to use them.
@@ -275,17 +282,20 @@ how state, context, and CSS variables compose into something cohesive.
 
 ### Stack
 React · TypeScript · CSS Variables · Context API
-`,
-	},
-	{
-		Title:     "Throttle",
-		Slug:      "throttle",
-		Year:      "2026",
-		Category:  "personal",
-		Tags:      []string{"Java", "Spring Boot", "Redis", "Docker", "Maven", "JUnit"},
-		ShortDesc: "Production-grade API rate limiting service with sliding-window algorithm, Redis-backed atomic execution, and 87% test coverage.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/throttle"}},
-		LongDesc: `## Throttle
+```
+
+---
+
+#### Throttle
+- **Slug:** `throttle`
+- **Year:** 2026
+- **Category:** personal
+- **Tags:** Java, Spring Boot, Redis, Docker, Maven, JUnit
+- **Short description:** Production-grade API rate limiting service with sliding-window algorithm, Redis-backed atomic execution, and 87% test coverage.
+- **GitHub:** github.com/sanikasurose/throttle
+- **Long description (Markdown):**
+```markdown
+## Throttle
 
 A production-grade API rate limiting service. Enforces per-user request quotas using a
 sliding window algorithm backed by Redis, with atomic Lua script execution to prevent
@@ -305,17 +315,20 @@ eliminates this. Throttle implements it correctly.
 
 ### Stack
 Java 17 · Spring Boot 3.5.12 · Redis 7 · Docker · Maven · JUnit 5
-`,
-	},
-	{
-		Title:     "Pulp",
-		Slug:      "pulp",
-		Year:      "2026",
-		Category:  "personal",
-		Tags:      []string{"Python", "Claude Haiku", "OCR", "Tesseract", "Docker", "CLI", "LLMs"},
-		ShortDesc: "Local-first CLI that converts PDFs (text-layer or scanned) into clean, semantically structured Markdown for LLM/RAG ingestion.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/pulp"}},
-		LongDesc: `## Pulp
+```
+
+---
+
+#### Pulp
+- **Slug:** `pulp`
+- **Year:** 2026
+- **Category:** personal
+- **Tags:** Python, Claude Haiku, OCR, Tesseract, Docker, CLI, LLMs
+- **Short description:** Local-first CLI that converts PDFs (text-layer or scanned) into clean, semantically structured Markdown for LLM/RAG ingestion.
+- **GitHub:** github.com/sanikasurose/pulp
+- **Long description (Markdown):**
+```markdown
+## Pulp
 
 A local-first CLI that converts PDFs — text-layer or scanned — into clean,
 semantically structured Markdown suitable for LLM and RAG ingestion.
@@ -334,17 +347,20 @@ the result. It never crashes on LLM failure — falls back to heuristic output g
 
 ### Stack
 Python 3.11 · Claude Haiku · Tesseract · Poppler · Docker · uv
-`,
-	},
-	{
-		Title:     "Committr",
-		Slug:      "committr",
-		Year:      "2026",
-		Category:  "personal",
-		Tags:      []string{"Java", "Spring Boot", "PostgreSQL", "Docker", "CI/CD", "Jenkins"},
-		ShortDesc: "Full-stack developer analytics platform for tracking GitHub activity, engineering productivity metrics, and repository insights.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/committr"}},
-		LongDesc: `## Committr
+```
+
+---
+
+#### Committr
+- **Slug:** `committr`
+- **Year:** 2026
+- **Category:** personal
+- **Tags:** Java, Spring Boot, PostgreSQL, Docker, CI/CD, Jenkins
+- **Short description:** Full-stack developer analytics platform for tracking GitHub activity, engineering productivity metrics, and repository insights.
+- **GitHub:** github.com/sanikasurose/committr
+- **Long description (Markdown):**
+```markdown
+## Committr
 
 A full-stack developer analytics platform for tracking GitHub activity,
 engineering productivity metrics, and repository insights.
@@ -356,17 +372,20 @@ engineering productivity metrics, and repository insights.
 
 ### Stack
 Java · Spring Boot · PostgreSQL · Docker · CI/CD · Jenkins
-`,
-	},
-	{
-		Title:     "Surose OS",
-		Slug:      "surose-os",
-		Year:      "2025",
-		Category:  "personal",
-		Tags:      []string{"Go", "Wish", "Bubbletea", "Lipgloss", "Glamour", "SSH"},
-		ShortDesc: "The SSH portfolio TUI you're currently inside.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/surose-os"}},
-		LongDesc: `## Surose OS
+```
+
+---
+
+#### Surose OS
+- **Slug:** `surose-os`
+- **Year:** 2025
+- **Category:** personal
+- **Tags:** Go, Wish, Bubbletea, Lipgloss, Glamour, SSH
+- **Short description:** The SSH portfolio TUI you're currently inside.
+- **GitHub:** github.com/sanikasurose/surose-os
+- **Long description (Markdown):**
+```markdown
+## Surose OS
 
 The thing you're using right now.
 
@@ -382,16 +401,22 @@ DigitalOcean Droplet · systemd · sanikasurose.com
 
 ### Source
 Open source. Link below.
-`,
-	},
-	{
-		Title:     "Airport Baggage Handling",
-		Slug:      "airport-baggage",
-		Year:      "2024",
-		Category:  "personal",
-		Tags:      []string{"Python", "OOP", "CAD", "Simulation", "Hardware Integration"},
-		ShortDesc: "Drawbridge-inspired mechanical ramp system for airport baggage transfers — simulation, control logic, and physical prototype.",
-		LongDesc: `## International Airport — Smart Baggage Handling
+```
+
+---
+
+### Course Project
+
+#### International Airport — Smart Baggage Handling Mechanism
+- **Slug:** `airport-baggage`
+- **Year:** 2024
+- **Category:** personal
+- **Tags:** Python, OOP, CAD, Simulation, Hardware Integration
+- **Course:** ENG 1P13 — Integrated Cornerstone Design Projects in Engineering, McMaster University
+- **Short description:** Drawbridge-inspired mechanical ramp system for airport baggage transfers — simulation, control logic, and physical prototype.
+- **Long description (Markdown):**
+```markdown
+## International Airport — Smart Baggage Handling
 
 A team engineering design project from **ENG 1P13** at McMaster University.
 Designed and prototyped a drawbridge-inspired mechanical ramp system to improve
@@ -405,82 +430,90 @@ the efficiency and safety of airport baggage transfers between platforms.
 
 ### Stack
 Python · OOP · CAD · Actuator control · Motion simulation · Hardware integration
-`,
-	},
-}
+```
 
-// Experience is the unified chronological list, most recent first.
-var Experience = []ExperienceEntry{
-	{
-		Kind:     "work",
-		Title:    "Software Engineer Intern",
-		Org:      "TranQuility Inc.",
-		Location: "Toronto, ON (Remote)",
-		Dates:    "May 2026 – Present",
-		Bullets: []string{
-			"Developing backend APIs and automation workflows using FastAPI, PostgreSQL, and Redis",
-			"Building full-stack application features with React/Next.js in a fast-paced startup environment",
-			"Integrating external APIs and supporting deployment, debugging, monitoring, and system improvements",
-			"Contributing to AI-driven application workflows and real-time user operations",
-			"Collaborating in Agile development cycles with ownership over feature implementation and testing",
-		},
-	},
-	{
-		Kind:     "work",
-		Title:    "Undergraduate Research Assistant",
-		Org:      "McMaster University — Faculty of Engineering",
-		Location: "Hamilton, ON",
-		Dates:    "May 2026 – Present",
-		Bullets: []string{
-			"Fine-tuning and evaluating transformer-based NLP models on large-scale text datasets using Python and PyTorch",
-			"Building reproducible data-processing and model-training pipelines for experimentation, benchmarking, and evaluation workflows",
-			"Analyzing model outputs, accuracy metrics, and performance trends across multiple datasets and training configurations",
-			"Working with modern ML and LLM workflows including data preprocessing, tokenization, and inference evaluation",
-			"Documenting experimental methodologies, technical findings, and research workflows in collaborative academic environments",
-		},
-	},
-	{
-		Kind:     "hackathon",
-		Title:    "Midnight Hackathon 2026",
-		Location: "Online",
-		Dates:    "May 2026",
-		Project:  "VeriHire",
-		Brief:    "Built VeriHire — a privacy-first hiring platform using zero-knowledge proofs so candidates prove qualifications without exposing documents.",
-	},
-	{
-		Kind:     "hackathon",
-		Title:    "Hacktech 2026",
-		Location: "California Institute of Technology, Los Angeles, CA",
-		Dates:    "April 2026",
-		Project:  "Piratech",
-		Brief:    "Built Piratech — an AI-powered security analysis platform that explains exactly how vulnerabilities in real codebases can be exploited.",
-	},
-	{
-		Kind:     "hackathon",
-		Title:    "ElleHacks 2026",
-		Location: "York University, Toronto, ON",
-		Dates:    "February 2026",
-		Project:  "SeamSecure",
-		Brief:    "Built SeamSecure — a platform that detects conversation hijacking and email thread compromise using LLM-based intent drift analysis.",
-	},
-	{
-		Kind:     "hackathon",
-		Title:    "DeltaHacks 12",
-		Location: "McMaster University, Hamilton, ON",
-		Dates:    "January 2026",
-		Project:  "CLAIRITY",
-		Brief:    "Built CLAIRITY — an iOS app that translates complex medical and institutional documents into clear, actionable next steps.",
-	},
-}
+---
 
-var Contact = ContactInfo{
-	Email:    "sanikasurose@gmail.com",
-	LinkedIn: "linkedin.com/in/sanikasurose",
-	GitHub:   "github.com/sanikasurose",
-	Note:     "Email is the best way to reach me.",
-}
+## Experience
 
-const AboutText = `Sanika Surose
+### Work Roles
+Display order: most recent first.
+
+---
+
+**Software Engineer Intern**
+- Company: TranQuility Inc.
+- Location: Toronto, ON (Remote)
+- Dates: May 2026 – Present
+- Bullets:
+  - Developing backend APIs and automation workflows using FastAPI, PostgreSQL, and Redis
+  - Building full-stack application features with React/Next.js in a fast-paced startup environment
+  - Integrating external APIs and supporting deployment, debugging, monitoring, and system improvements
+  - Contributing to AI-driven application workflows and real-time user operations
+  - Collaborating in Agile development cycles with ownership over feature implementation and testing
+
+---
+
+**Undergraduate Research Assistant**
+- Supervisor: Dr. Charles Welch
+- Institution: McMaster University — Faculty of Engineering
+- Location: Hamilton, ON
+- Dates: May 2026 – Present
+- Research area: Natural Language Processing (NLP) and Applied Machine Learning
+- Bullets:
+  - Fine-tuning and evaluating transformer-based NLP models on large-scale text datasets using Python and PyTorch
+  - Building reproducible data-processing and model-training pipelines for experimentation, benchmarking, and evaluation workflows
+  - Analyzing model outputs, accuracy metrics, and performance trends across multiple datasets and training configurations
+  - Working with modern ML and LLM workflows including data preprocessing, tokenization, and inference evaluation
+  - Documenting experimental methodologies, technical findings, and research workflows in collaborative academic environments
+
+---
+
+### Hackathon Entries
+Display order: most recent first (same order as hackathon projects list above reversed — VeriHire first on experience page).
+
+**IMPORTANT:** On the Experience screen, hackathon entries show ONLY the event name, location, date, project name, and a single brief description line. No bullet points. No full project description. End with a note pointing the user to the Projects screen for full detail.
+
+Format for each hackathon entry on the Experience screen:
+```
+[Event Name]
+[Location] · [Month Year]
+Built [Project Name] — [one sentence description]
+→ full project detail in projects
+```
+
+---
+
+**Midnight Hackathon 2026**
+- Project: VeriHire
+- Location: Online
+- Date: May 2026
+- Brief: Built VeriHire — a privacy-first hiring platform using zero-knowledge proofs so candidates prove qualifications without exposing documents.
+
+**Hacktech 2026**
+- Project: Piratech
+- Location: California Institute of Technology, Los Angeles, CA
+- Date: April 2026
+- Brief: Built Piratech — an AI-powered security analysis platform that explains exactly how vulnerabilities in real codebases can be exploited.
+
+**ElleHacks 2026**
+- Project: SeamSecure
+- Location: York University, Toronto, ON
+- Date: February 2026
+- Brief: Built SeamSecure — a platform that detects conversation hijacking and email thread compromise using LLM-based intent drift analysis.
+
+**DeltaHacks 12**
+- Project: CLAIRITY
+- Location: McMaster University, Hamilton, ON
+- Date: January 2026
+- Brief: Built CLAIRITY — an iOS app that translates complex medical and institutional documents into clear, actionable next steps.
+
+---
+
+## About
+
+```
+Sanika Surose
 Software Engineer · McMaster University, Class of 2029
 
 Currently a Software Engineer Intern at TranQuility Inc., building backend APIs,
@@ -494,4 +527,17 @@ backends, distributed systems, LLM tooling, and occasionally things like this.
 Built this in Go, which I'd never used before. That was the point.
 
 McMaster University
-B.Eng. Software Engineering (Co-op) · Expected 2029`
+B.Eng. Software Engineering (Co-op) · Expected 2029
+```
+
+---
+
+## Contact
+
+```
+sanikasurose@gmail.com
+linkedin.com/in/sanikasurose
+github.com/sanikasurose
+
+Email is the best way to reach me.
+```

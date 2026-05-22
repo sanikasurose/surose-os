@@ -19,28 +19,44 @@ func (m ProjectsModel) View(width int) string {
 	sb.WriteString(ScreenPad.Render(ScreenTitle.Render("projects")))
 	sb.WriteString("\n\n")
 
+	// Hackathons group.
+	sb.WriteString("  " + MetadataLabel.Render("hackathons") + "\n")
+	sb.WriteString("  " + GhostText.Render(strings.Repeat("─", 38)) + "\n")
 	for i, p := range content.Projects {
-		tags := formatTags(p.Tags)
-		year := MetadataLabel.Render(p.Year)
-
-		titleLine := fmt.Sprintf("%s  %s", ProjectTitle.Render(p.Title), year)
-		descLine := MetadataLabel.Render(p.ShortDesc)
-		tagsLine := tags
-
-		block := titleLine + "\n" + descLine + "\n" + tagsLine
-
-		if i == m.cursor {
-			sb.WriteString(ActiveBox.Render(block))
-		} else {
-			sb.WriteString(ContentBox.Render(block))
+		if p.Category == "hackathon" {
+			sb.WriteString(m.renderRow(p, i))
 		}
-		sb.WriteString("\n")
+	}
+
+	sb.WriteString("\n")
+
+	// Personal projects group.
+	sb.WriteString("  " + MetadataLabel.Render("personal projects") + "\n")
+	sb.WriteString("  " + GhostText.Render(strings.Repeat("─", 38)) + "\n")
+	for i, p := range content.Projects {
+		if p.Category == "personal" {
+			sb.WriteString(m.renderRow(p, i))
+		}
 	}
 
 	sb.WriteString("\n")
 	sb.WriteString(KeyHint.Render("  j/k  navigate    enter  open    esc  back"))
 
 	return sb.String()
+}
+
+func (m ProjectsModel) renderRow(p content.Project, idx int) string {
+	tags := formatTags(p.Tags)
+	year := MetadataLabel.Render(p.Year)
+	titleLine := fmt.Sprintf("  %s  %s", ProjectTitle.Render(p.Title), year)
+	descLine := "  " + MetadataLabel.Render(p.ShortDesc)
+	tagsLine := "  " + tags
+	block := titleLine + "\n" + descLine + "\n" + tagsLine + "\n"
+
+	if idx == m.cursor {
+		return AccentText.Render("▸") + block[1:]
+	}
+	return block
 }
 
 func (m ProjectsModel) CursorUp() ProjectsModel {
