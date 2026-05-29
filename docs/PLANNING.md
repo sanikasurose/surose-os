@@ -1,5 +1,5 @@
 # Surose OS — Planning Document
-### PRD + TRD Reference · Last updated: May 2025
+### PRD + TRD Reference · Last updated: May 2026
 
 ---
 
@@ -17,6 +17,8 @@ An SSH-accessible interactive portfolio. When someone runs `ssh enter@sanikasuro
 
 The visual identity is the differentiator within that format. Most SSH portfolios look like system logs. This one should look like it was designed by someone who cares about every pixel.
 
+A **web version** with the same visual identity is built separately for non-technical visitors and will share the `sanikasurose.com` domain (HTTPS on 443, SSH on 22).
+
 ### Target Audience
 
 **Primary:**
@@ -27,8 +29,8 @@ The visual identity is the differentiator within that format. Most SSH portfolio
 - Other students and early-career engineers who find it via social sharing or GitHub
 - Recruiters at larger tech companies — the "wow, that's different" factor is enough to make the portfolio memorable even if they don't fully understand the stack
 
-**Not the audience (for this version):**
-- Non-technical users, family, general public — a web version will be built separately for this group
+**Not the audience (for the SSH app):**
+- Non-technical users, family, general public — use the web version (separate project)
 
 ### Core Value Proposition
 
@@ -49,34 +51,40 @@ This is not a product with DAUs or conversion funnels. Success looks like:
 
 ### Feature List
 
-**MVP (Phase 1–3, must ship):**
-- SSH server accessible at `ssh enter@sanikasurose.com`
+**Shipped (Phases 1–3 — complete):**
+- SSH server (local dev on `:2222`; production target `ssh enter@sanikasurose.com`)
 - Boot sequence: cinematic name reveal
-- Home, Projects List, Project Detail, About, Contact screens
+- Screens: Home, Projects (menu + list), Project Detail, Experience, About, Contact, Guestbook
 - Keyboard navigation: arrows, j/k, Enter, Esc, q
-- `hisanika>` command prompt with full command set
-- Full visual design system: custom palette, rounded borders, color hierarchy
-- Real content: all four projects, real bio, real contact info
+- `hisanika>` command prompt with full command set (including `guestbook`, `open <slug>`)
+- Full visual design system: custom palette, selection styling, Glamour theme
+- Real content: all projects, experience, bio, contact (see **docs/CONTENT.md**)
+- Visitor counter and guestbook (SQLite)
+- GitHub contribution grid on Home (optional `GITHUB_TOKEN`)
 
-**Phase 4 (should have):**
-- Smooth screen transitions
-- Window resize handling
+**Phase 4 (remaining — deploy only):**
 - Production deployment on DigitalOcean
-- Live at `ssh enter@sanikasurose.com`
+- Live at `ssh enter@sanikasurose.com` with no `-p` port flag
+- DNS: `sanikasurose.com` A record → Droplet IP
 
-**Nice-to-have (post-MVP):**
+**Deferred / not planned for this repo:**
+- Smooth screen transitions
+- Window resize polish beyond storing dimensions
 - Boot sequence skip on keypress
+- `?` global help overlay (per-screen `HelpHint` footers instead)
+- Windows / limited-terminal disclaimer at boot
 - Easter eggs (hidden commands, konami code equivalent)
-- Visitor counter (how many people have SSH'd in)
-- ASCII art portrait on the About screen (using `chafa` or equivalent)
-- Animated cursor in the prompt
+- ASCII art portrait on About (`chafa` or equivalent)
+- Animated cursor in the global prompt
 
-**Out of scope for this project:**
+**Nice-to-have (implemented):**
+- Visitor counter ✅
+
+**Out of scope for this Go project:**
 - Authentication of any kind
-- User accounts or persistent sessions
-- Any web interface (separate project)
-- Mobile or Windows-native support (Windows Terminal works; older setups get a disclaimer)
-- Analytics beyond a simple visitor counter
+- User accounts or persistent sessions beyond guestbook messages
+- Web interface (separate project; same domain when live)
+- Mobile or Windows-native apps (Windows Terminal works for SSH)
 
 ### User Stories
 
@@ -87,12 +95,14 @@ This is not a product with DAUs or conversion funnels. Success looks like:
 
 ### Timeline
 
-| Phase | Goal | Target |
+| Phase | Goal | Status |
 |---|---|---|
-| Phase 1 | Working SSH server + navigation skeleton | Week 1 |
-| Phase 2 | Real content + full command system | Week 2 |
-| Phase 3 | Full visual identity | Week 3 |
-| Phase 4 | Polish + production deployment | Week 4 |
+| Phase 1 | Working SSH server + navigation skeleton | ✅ Complete |
+| Phase 2 | Real content + full command system + Experience | ✅ Complete |
+| Phase 3 | Full visual identity | ✅ Complete |
+| Phase 4 | Production deployment | 🔄 Remaining |
+
+**Order of launch:** Web portfolio (separate repo) in progress first; SSH production deploy after both are ready. Domain `sanikasurose.com` required for production entry command and public website.
 
 ---
 
@@ -106,7 +116,8 @@ This is not a product with DAUs or conversion funnels. Success looks like:
 | **Wish** | Charmbracelet's SSH server middleware for Bubbletea. Handles the SSH layer, key management, and session lifecycle. No need to build a raw SSH server. |
 | **Bubbletea** | Elm-architecture TUI framework. Clean separation of model/update/view makes the codebase navigable and testable. The right tool for a multi-screen stateful TUI. |
 | **Lipgloss** | Declarative terminal styling. Lets us build a proper design system (named styles, consistent tokens) rather than inline ANSI codes everywhere. |
-| **Glamour** | Markdown rendering in the terminal. Used exclusively in Project Detail views. Lets project content be written in Markdown without custom rendering logic. |
+| **Glamour** | Markdown rendering in the terminal. Custom JSON theme in Project Detail. |
+| **SQLite** | Guestbook messages only; content stays in `data.go`. |
 | **DigitalOcean** | Simple Linux VPS. No container orchestration needed for a single Go binary. $6/month. Easier port forwarding setup than Fly.io for raw TCP/SSH traffic. |
 
 ### Architecture Overview
@@ -119,95 +130,97 @@ Internet
     │
     ▼ :2222 (TCP)
 [ Wish SSH Server ]
-    │  ─ handles connection lifecycle
-    │  ─ accepts all public keys + passwords
     │  ─ one Bubbletea program per session
     ▼
 [ Bubbletea Root Model ]
-    │  ─ holds current screen state
-    │  ─ routes keypresses to active screen
-    │  ─ manages screen transitions
+    │  ─ screen router + hisanika> prompt
     ▼
 [ Screen Models ] ── [ Content Layer (data.go) ]
-  boot.go                 Project structs
-  home.go                 About string (Markdown)
-  projects.go             Contact struct
+  boot.go                 Projects, Experience, About, Contact
+  home.go                 (+ stats cache for grid)
+  projects.go
   project_detail.go
+  experience.go
   about.go
   contact.go
+  guestbook.go
     │
-    ▼
-[ styles.go ]  ← single source of truth for all Lipgloss styles
+    ├── [ styles.go ]     ← Lipgloss design system
+    ├── [ guestbook/ ]    ← SQLite (shared across sessions)
+    └── [ stats/ ]        ← visitors.count + GitHub API cache
 ```
 
-Each SSH connection gets its own independent Bubbletea program instance. Sessions do not share state. This means multiple people can SSH in simultaneously without interference.
+Each SSH connection gets its own independent Bubbletea program instance. Guestbook and visitor counter are shared via filesystem stores under `SUROSE_DATA_DIR`.
 
 ### Data Model
 
-No database. All content is defined as Go structs in `internal/content/data.go`.
+Portfolio content: Go structs in `internal/content/data.go` (no migrations).
 
 ```go
 type Project struct {
     Title       string
     Slug        string
     Year        string
+    Category    string   // "hackathon" or "personal"
     Tags        []string
     ShortDesc   string
     LongDesc    string   // Markdown, rendered by Glamour
     Links       []Link
-    Event       string   // optional: hackathon name / location
+    Event       string
+    Location    string
 }
 
-type Link struct {
-    Label string
-    URL   string
-}
-
-type ContactInfo struct {
-    Email    string
-    LinkedIn string
-    GitHub   string
-    Note     string
+type ExperienceEntry struct {
+    Kind     string   // "work" or "hackathon"
+    Title    string
+    Org      string
+    // ...
 }
 ```
 
-To add or edit a project: edit `data.go`, recompile, redeploy. No migrations, no database.
+Guestbook: SQLite at `{SUROSE_DATA_DIR}/guestbook.db`. Visitor counter: `{SUROSE_DATA_DIR}/visitors.count`.
+
+To add or edit a project: edit `data.go`, recompile, redeploy.
 
 ### Screen State Machine
 
 ```
-[Boot] ──→ [Home] ──→ [Projects List] ──→ [Project Detail]
-                │                                │
-                ├──→ [About]              Esc ───┘
-                │
-                └──→ [Contact]
+[Boot] ──→ [Home] ──→ [Projects Menu] ──→ [Projects List] ──→ [Project Detail]
+             │              │                    │                  Esc
+             ├── [Experience]                   Esc
+             ├── [About]
+             ├── [Guestbook]
+             └── [Contact]
 ```
 
-The root model holds a `currentScreen` enum and delegates all `Update()` and `View()` calls to the active screen model. Screen transitions are triggered by returning a custom `Msg` type from a screen's `Update()`.
+Esc goes back one level. `q` quits from any screen.
 
 ### Third-Party Integrations
 
-None. No external APIs, no payment systems, no auth providers. The only external dependency is the Go module system at build time.
+- **Build time:** Go module dependencies only
+- **Runtime (optional):** GitHub REST API for contribution calendar, streak, and stars on Home — requires `GITHUB_TOKEN` on the server
 
 ### Performance Targets
 
 - Connection to first rendered frame: < 500ms
-- Boot sequence duration: 3–4 seconds (intentional, not a load time)
+- Boot sequence duration: ~3 seconds (intentional, not a load time)
 - Keypress response time: < 16ms (one frame at 60fps)
 - Memory per session: < 10MB
 - Concurrent sessions supported: 50+ (limited by Droplet RAM, not the app)
 
 ### Security Considerations
 
-- No authentication by design — this is a public read-only portfolio
-- No user input is executed as code or written to disk
+- No authentication by design — this is a public read-only portfolio (guestbook accepts short text only, validated and stored in SQLite)
+- No user input is executed as code
 - The `hisanika>` prompt is a command router, not a shell — only whitelisted commands are accepted
 - SSH host key is generated once, stored on the server, not in the repo
-- The `enter` system user on the Droplet has no shell (`/usr/sbin/nologin`), no sudo, and no home directory write access — it only exists to receive SSH connections
+- The `enter` system user on the Droplet has no shell (`/usr/sbin/nologin`), no sudo — only receives SSH connections into the app
 
 ### Infrastructure & Deployment
 
 **Server:** DigitalOcean Droplet, Ubuntu 22.04 LTS, Basic $6/month plan (1 vCPU, 1GB RAM, 25GB SSD)
+
+**Domain:** Register or configure `sanikasurose.com`. Same apex can serve SSH (port 22) and HTTPS web (port 443) on one VPS, or split web to a static host with DNS CNAME/`www` as needed.
 
 **Build process:**
 ```bash
@@ -218,35 +231,22 @@ scp surose-os user@<droplet-ip>:/home/surose/surose-os/
 **Port strategy:**
 - Port 22: admin SSH access (for Sanika to manage the server)
 - Port 2222: the Wish SSH server (the portfolio app)
-- UFW NAT rule redirects incoming :22 connections from the `enter` user to :2222
+- UFW NAT rule redirects incoming :22 connections for the `enter` user to :2222
 - This gives visitors the clean `ssh enter@sanikasurose.com` entry with no port flag
 
 **Process management:** systemd. The binary runs as a dedicated `surose` system user. On crash, systemd restarts it after 5 seconds.
 
-**Makefile targets:**
+**Makefile targets (planned for Phase 4):**
 ```makefile
 make build     # compile for Linux AMD64
 make run       # run locally for development
-make deploy    # build + scp to Droplet + restart service
-make logs      # tail journalctl output from Droplet
-make ssh       # SSH into the Droplet as admin
+make deploy    # build + scp to Droplet + restart service (to add)
+make logs      # tail journalctl output from Droplet (to add)
+make ssh       # SSH into the Droplet as admin (to add)
 ```
 
-**Domain:** A record on `sanikasurose.com` pointing to the Droplet's public IP. No CDN, no load balancer, no HTTPS (SSH doesn't use TLS).
+**DNS:** A record on `sanikasurose.com` pointing to the Droplet's public IP for SSH. Web uses 443 on the same host or a separate hosting provider.
 
 ### Windows Compatibility
 
-Windows Terminal (Windows 10+) supports SSH natively and renders the app correctly. The app should detect limited terminal environments at connection time by checking:
-
-- `$TERM` environment variable
-- `$WT_SESSION` (set by Windows Terminal)
-- Terminal dimensions (too small = prompt to resize)
-
-If a limited environment is detected, display a one-time disclaimer at the top of the boot sequence:
-
-```
-note: some visual elements may render differently in older terminals.
-      windows terminal, iterm2, and wezterm are fully supported.
-```
-
-This message uses `TextSecondary` color and disappears after the boot sequence completes.
+Windows Terminal (Windows 10+) supports SSH natively and renders the app correctly. No special disclaimer or detection is implemented; recommend Windows Terminal, iTerm2, or WezTerm in README if needed.

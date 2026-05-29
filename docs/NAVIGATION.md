@@ -3,6 +3,8 @@
 This file contains the complete navigation specification for Surose OS.
 The coding agent reads this file before implementing screen routing, keybindings, or the hisanika> command prompt.
 
+**Status:** Phases 1–3 implemented. Phase 4 is production deploy only.
+
 ---
 
 ## Screen Transition Map
@@ -10,24 +12,29 @@ The coding agent reads this file before implementing screen routing, keybindings
 ```
 [Boot] ──→ [Home]
              │
-             ├──[1] / Enter──→ [Projects]
+             ├──[1] / Enter──→ [About]              Esc──→ [Home]
+             │
+             ├──[2] / Enter──→ [Experience]         Esc──→ [Home]
+             │
+             ├──[3] / Enter──→ [Projects Menu]
+             │                     │
+             │              [1|2] / Enter──→ [Projects List]
              │                     │
              │              Enter──→ [Project Detail]
              │                     │
-             │                  Esc──→ back to [Projects]
+             │                  Esc──→ [Projects List]
+             │                     │
+             │                  Esc──→ [Projects Menu]
              │
-             ├──[2] / Enter──→ [Experience]
-             │                  Esc──→ back to [Home]
+             ├──[4] / Enter──→ [Guestbook]           Esc (empty input)──→ [Home]
              │
-             ├──[3] / Enter──→ [About]
-             │                  Esc──→ back to [Home]
-             │
-             └──[4] / Enter──→ [Contact]
-                                Esc──→ back to [Home]
+             └──[5] / Enter──→ [Contact]            Esc──→ [Home]
 ```
 
 Esc always goes back exactly one level. It never exits the app.
-q always quits the app from any screen.
+`q` always quits the app from any screen.
+
+On **Guestbook**, `:` does not open the global `hisanika>` prompt — input goes to the message field.
 
 ---
 
@@ -35,30 +42,48 @@ q always quits the app from any screen.
 
 | Key | Action |
 |---|---|
-| `1` | Go to Projects |
+| `1` | Go to About |
 | `2` | Go to Experience |
-| `3` | Go to About |
-| `4` | Go to Contact |
+| `3` | Go to Projects menu |
+| `4` | Go to Guestbook |
+| `5` | Go to Contact |
 | `↑` / `k` | Move menu selection up |
 | `↓` / `j` | Move menu selection down |
 | `Enter` | Open selected menu item |
-| `?` | Show help overlay |
+| `:` | Open `hisanika>` command prompt |
 | `q` / `Ctrl+C` | Quit |
+
+Per-screen key hints appear in the footer (`HelpHint`); there is no global `?` overlay.
 
 ---
 
-## Projects Screen
+## Projects Menu Screen
 
-Projects are displayed in two labeled groups: `hackathons` (top) and `personal projects` (bottom).
-Selection moves continuously across both groups — j/k navigates through all items in order.
+| Key | Action |
+|---|---|
+| `1` | Open hackathons list |
+| `2` | Open personal projects list |
+| `↑` / `k` | Move selection up |
+| `↓` / `j` | Move selection down |
+| `Enter` | Open selected category list |
+| `Esc` | Return to Home |
+| `q` | Quit |
+| `:` | Open `hisanika>` prompt |
+
+---
+
+## Projects List Screen
+
+Filtered single-column list for the chosen category (`hackathon` or `personal`).
 
 | Key | Action |
 |---|---|
 | `↑` / `k` | Move selection up |
 | `↓` / `j` | Move selection down |
 | `Enter` | Open selected project detail |
-| `Esc` | Return to Home |
+| `Esc` | Return to Projects menu |
 | `q` | Quit |
+| `:` | Open `hisanika>` prompt |
 
 ---
 
@@ -68,9 +93,10 @@ Selection moves continuously across both groups — j/k navigates through all it
 |---|---|
 | `↑` / `k` | Scroll up |
 | `↓` / `j` | Scroll down |
-| `o` | Open first link (GitHub or demo) in browser, if terminal supports it |
-| `Esc` | Return to Projects |
+| `o` | Copy first link to clipboard (OSC 52); status line confirms URL |
+| `Esc` | Return to Projects list |
 | `q` | Quit |
+| `:` | Open `hisanika>` prompt |
 
 ---
 
@@ -82,6 +108,7 @@ Selection moves continuously across both groups — j/k navigates through all it
 | `↓` / `j` | Scroll down |
 | `Esc` | Return to Home |
 | `q` | Quit |
+| `:` | Open `hisanika>` prompt |
 
 ---
 
@@ -93,6 +120,7 @@ Selection moves continuously across both groups — j/k navigates through all it
 | `↓` / `j` | Scroll down |
 | `Esc` | Return to Home |
 | `q` | Quit |
+| `:` | Open `hisanika>` prompt |
 
 ---
 
@@ -102,22 +130,39 @@ Selection moves continuously across both groups — j/k navigates through all it
 |---|---|
 | `Esc` | Return to Home |
 | `q` | Quit |
+| `:` | Open `hisanika>` prompt |
 
 ---
 
-## Global Keybindings (all screens)
+## Guestbook Screen
 
 | Key | Action |
 |---|---|
-| `q` | Quit application |
+| Type | Enter message (when input focused) |
+| `Enter` | Post message |
+| `Esc` | Back to Home if input empty; otherwise clear/focus behavior per implementation |
+| `↑` / `k` | Scroll message list up |
+| `↓` / `j` | Scroll message list down |
+| `pgup` / `pgdown` | Scroll message list |
+| `q` | Quit |
+
+No `:` prompt on this screen.
+
+---
+
+## Global Keybindings
+
+| Key | Action |
+|---|---|
+| `q` | Quit application (all screens) |
 | `Ctrl+C` | Quit application |
-| `?` | Show help overlay |
+| `:` | Open `hisanika>` prompt (all screens except Guestbook) |
 
 ---
 
 ## hisanika> Command Prompt
 
-Available on all screens. Activated by pressing `:` (colon).
+Available on all screens except Guestbook. Activated by pressing `:` (colon).
 The prompt label `hisanika>` renders in AccentPrimary (#C8847A).
 User input renders in TextPrimary (#E8E4DC).
 Command output renders in TextSecondary (#7A7A82).
@@ -128,9 +173,10 @@ Unknown command response: `unknown command. type help for a list.`
 | Command | Action |
 |---|---|
 | `help` | Display all available commands |
-| `projects` | Navigate to Projects screen |
+| `projects` | Navigate to Projects menu |
 | `experience` | Navigate to Experience screen |
 | `about` | Navigate to About screen |
+| `guestbook` | Navigate to Guestbook screen |
 | `contact` | Navigate to Contact screen |
 | `open <slug>` | Open a project detail screen directly by slug |
 | `clear` | Clear prompt output |
@@ -157,7 +203,7 @@ Unknown command response: `unknown command. type help for a list.`
 
 ### Edge Cases
 
-- `open` with no argument → `usage: open <slug>`
+- `open` with no argument → `usage: open <project>`
 - `open <invalid-slug>` → `project not found. type projects to browse.`
 - Any unrecognized command → `unknown command. type help for a list.`
 - Empty input (Enter with no text) → no output, prompt clears
