@@ -37,102 +37,14 @@ type ContactInfo struct {
 	Note     string
 }
 
-// Projects is the master list. Hackathons first (CLAIRITY → SeamSecure → Piratech → VeriHire),
+// Projects is the master list. Hackathons first (VeriHire → Piratech → SeamSecure → CLAIRITY),
 // then personal projects in display order.
 var Projects = []Project{
 	// ── Hackathons ────────────────────────────────────────────────────────────
 	{
-		Title:     "CLAIRITY",
-		Slug:      "clairity",
-		Year:      "2026",
-		Category:  "hackathon",
-		Event:     "DeltaHacks 12",
-		Location:  "McMaster University, Hamilton, ON",
-		Tags:      []string{"Python", "Swift", "LLMs", "OCR", "iOS"},
-		ShortDesc: "AI-powered iOS app that translates complex medical and institutional language into clear, actionable next steps.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/syaanmerchant/clAIrity"}},
-		LongDesc: `## CLAIRITY
-
-Built at **DeltaHacks 12** at McMaster University.
-
-An AI-powered iOS application that transforms complex medical, insurance, and institutional
-language into clear, structured, actionable next steps — designed for patients navigating
-high-stakes interactions like ER discharge instructions or insurance documents.
-
-### What I built
-- LLM-based reasoning and structured output generation for clinical document parsing
-- OCR-driven extraction from PDFs, images, and typed text inputs
-- Clinical NLP for identifying medications, diagnoses, timelines, and follow-up requirements
-- Privacy-conscious AI orchestration — no personal data stored server-side
-- Structured after-care guidance with conditional actions and safety triggers
-
-### Stack
-Python · Swift · LLMs · OCR · Clinical NLP · iOS
-`,
-	},
-	{
-		Title:     "SeamSecure",
-		Slug:      "seamsecure",
-		Year:      "2026",
-		Category:  "hackathon",
-		Event:     "ElleHacks 2026",
-		Location:  "York University, Toronto, ON",
-		Tags:      []string{"Python", "FastAPI", "React", "TypeScript", "Google Gemini", "OAuth"},
-		ShortDesc: "AI-powered platform that detects conversation hijacking and email thread compromise using hybrid rule-based and LLM analysis.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/SeamSecure/SeamSecure"}},
-		LongDesc: `## SeamSecure
-
-Built at **ElleHacks 2026** at York University.
-
-A full-stack cybersecurity web application that detects conversation hijacking and email
-thread compromise. Most phishing filters catch obvious spam — SeamSecure catches attacks
-that happen inside ongoing conversations between people who already trust each other.
-
-### What I built
-- AI-powered thread analysis using Google Gemini for intent drift detection and stylometric anomaly identification
-- Rule-based heuristic engine for urgency escalation, credential harvesting, suspicious URLs, and domain impersonation
-- Scores each thread 0–100% risk and categorizes as Safe, Suspicious, or Dangerous
-- Google OAuth 2.0 with read-only Gmail API access for direct inbox thread analysis
-- Privacy-first: all email content analyzed in real-time with no server-side storage
-
-### Stack
-Python · FastAPI · React · TypeScript · Tailwind CSS · Google Gemini · OAuth 2.0
-`,
-	},
-	{
-		Title:     "Piratech",
-		Slug:      "piratech",
-		Year:      "2026",
-		Category:  "hackathon",
-		Event:     "Hacktech 2026",
-		Location:  "California Institute of Technology, Los Angeles, CA",
-		Tags:      []string{"Python", "FastAPI", "WebSockets", "Semgrep", "LLMs", "React", "Vite"},
-		ShortDesc: "AI-powered security analysis platform for automated vulnerability detection and real-time code analysis.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/bebopkenny/hacktech2026part2"}},
-		LongDesc: `## Piratech
-
-Built at **Hacktech 2026** at the California Institute of Technology.
-
-A full-stack security analysis platform that detects exploitable vulnerabilities in real
-codebases. Most scanners flood developers with cryptic rule IDs — Piratech reads code the
-way a senior security engineer would and explains exactly how each vulnerability can be exploited.
-
-### What I built
-- Two-layer pipeline: Semgrep static analysis for candidate detection + K2-Think-V2 reasoning model for cross-file taint tracing and exploitability assessment
-- Traces taint paths across files to show exactly how attacker-controlled input reaches a sensitive sink
-- Detects authentication gaps and missing access controls at the route and middleware level
-- Filters false positives by verifying whether sanitization or ORM parameterization already covers each finding
-- GitHub webhook integration for automatic re-scans on every push
-- Deployed to Vultr from hour two of the build for live end-to-end pipeline testing
-
-### Stack
-Python · FastAPI · WebSockets · Semgrep · React · Vite · Backboard · Vultr
-`,
-	},
-	{
 		Title:     "VeriHire",
 		Slug:      "verihire",
-		Year:      "2026",
+		Year:      "May 2026",
 		Category:  "hackathon",
 		Event:     "Midnight Hackathon 2026",
 		Location:  "Online",
@@ -162,95 +74,177 @@ Backend Lead — owned the API layer, document processing pipeline, database sch
 Python · FastAPI · SQLAlchemy · PostgreSQL · Next.js · TypeScript · Tailwind CSS · Google Gemini · Midnight / ZK Proofs · Docker
 `,
 	},
+	{
+		Title:     "Piratech",
+		Slug:      "piratech",
+		Year:      "April 2026",
+		Category:  "hackathon",
+		Event:     "Hacktech 2026",
+		Location:  "California Institute of Technology, Los Angeles, CA",
+		Tags:      []string{"Python", "FastAPI", "WebSockets", "Semgrep", "LLMs", "React", "Vite"},
+		ShortDesc: "AI-powered security analysis platform for automated vulnerability detection and real-time code analysis.",
+		Links:     []Link{{Label: "GitHub", URL: "github.com/bebopkenny/hacktech2026part2"}},
+		LongDesc: `## Piratech
+
+Built at **Hacktech 2026** at the California Institute of Technology.
+
+A full-stack security analysis platform that detects exploitable vulnerabilities in real
+codebases. Most scanners flood developers with cryptic rule IDs — Piratech reads code the
+way a senior security engineer would and explains exactly how each vulnerability can be exploited.
+
+### What I built
+- Two-layer pipeline: Semgrep static analysis for candidate detection + K2-Think-V2 reasoning model for cross-file taint tracing and exploitability assessment
+- Traces taint paths across files to show exactly how attacker-controlled input reaches a sensitive sink
+- Detects authentication gaps and missing access controls at the route and middleware level
+- Filters false positives by verifying whether sanitization or ORM parameterization already covers each finding
+- GitHub webhook integration for automatic re-scans on every push
+- Deployed to Vultr from hour two of the build for live end-to-end pipeline testing
+
+### Stack
+Python · FastAPI · WebSockets · Semgrep · React · Vite · Backboard · Vultr
+`,
+	},
+	{
+		Title:     "SeamSecure",
+		Slug:      "seamsecure",
+		Year:      "February 2026",
+		Category:  "hackathon",
+		Event:     "ElleHacks 2026",
+		Location:  "York University, Toronto, ON",
+		Tags:      []string{"Python", "FastAPI", "React", "TypeScript", "Google Gemini", "OAuth"},
+		ShortDesc: "AI-powered platform that detects conversation hijacking and email thread compromise using hybrid rule-based and LLM analysis.",
+		Links:     []Link{{Label: "GitHub", URL: "github.com/SeamSecure/SeamSecure"}},
+		LongDesc: `## SeamSecure
+
+Built at **ElleHacks 2026** at York University.
+
+A full-stack cybersecurity web application that detects conversation hijacking and email
+thread compromise. Most phishing filters catch obvious spam — SeamSecure catches attacks
+that happen inside ongoing conversations between people who already trust each other.
+
+### What I built
+- AI-powered thread analysis using Google Gemini for intent drift detection and stylometric anomaly identification
+- Rule-based heuristic engine for urgency escalation, credential harvesting, suspicious URLs, and domain impersonation
+- Scores each thread 0–100% risk and categorizes as Safe, Suspicious, or Dangerous
+- Google OAuth 2.0 with read-only Gmail API access for direct inbox thread analysis
+- Privacy-first: all email content analyzed in real-time with no server-side storage
+
+### Stack
+Python · FastAPI · React · TypeScript · Tailwind CSS · Google Gemini · OAuth 2.0
+`,
+	},
+	{
+		Title:     "CLAIRITY",
+		Slug:      "clairity",
+		Year:      "January 2026",
+		Category:  "hackathon",
+		Event:     "DeltaHacks 12",
+		Location:  "McMaster University, Hamilton, ON",
+		Tags:      []string{"Python", "Swift", "LLMs", "OCR", "iOS"},
+		ShortDesc: "AI-powered iOS app that translates complex medical and institutional language into clear, actionable next steps.",
+		Links:     []Link{{Label: "GitHub", URL: "github.com/syaanmerchant/clAIrity"}},
+		LongDesc: `## CLAIRITY
+
+Built at **DeltaHacks 12** at McMaster University.
+
+An AI-powered iOS application that transforms complex medical, insurance, and institutional
+language into clear, structured, actionable next steps — designed for patients navigating
+high-stakes interactions like ER discharge instructions or insurance documents.
+
+### What I built
+- LLM-based reasoning and structured output generation for clinical document parsing
+- OCR-driven extraction from PDFs, images, and typed text inputs
+- Clinical NLP for identifying medications, diagnoses, timelines, and follow-up requirements
+- Privacy-conscious AI orchestration — no personal data stored server-side
+- Structured after-care guidance with conditional actions and safety triggers
+
+### Stack
+Python · Swift · LLMs · OCR · Clinical NLP · iOS
+`,
+	},
 
 	// ── Personal Projects ─────────────────────────────────────────────────────
 	{
-		Title:     "Typing Test",
-		Slug:      "typing-test",
-		Year:      "2024",
-		Category:  "personal",
-		Tags:      []string{"Python", "CustomTkinter", "GUI"},
-		ShortDesc: "Feature-rich graphical typing trainer with real-time analytics, session history, and per-character feedback.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/typing-test"}},
-		LongDesc: `## Typing Test
-
-A fully-featured graphical typing trainer built with Python and CustomTkinter.
-Migrated from a terminal-based v1 into a multi-screen GUI with persistent session tracking.
-
-### Features
-- Real-time per-character accuracy highlighting (green correct, red incorrect)
-- Live WPM calculation and accuracy percentage
-- Per-character mistake analytics — identifies your most frequently mistyped keys
-- Average keystroke delay tracking for consistency analysis
-- Persistent session history across runs (sessions.json)
-- Performance profile classification: Balanced / Fast but inaccurate / Accurate but slow / Needs consistency
-- Multi-screen flow: start → typing → results → progress summary
-
-### Stack
-Python · CustomTkinter · Session analytics · Modular GUI architecture
-`,
-	},
-	{
-		Title:     "Outreach Research Scraper",
-		Slug:      "outreach-research-scraper",
-		Year:      "2025",
-		Category:  "personal",
-		Tags:      []string{"Python", "Web Scraping", "NLP", "CLI"},
-		ShortDesc: "CLI tool that crawls university faculty pages and produces clean summaries of professor research interests and undergraduate opportunities.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/academic-research-scraper"}},
-		LongDesc: `## Outreach Research Scraper
-
-A Python CLI tool for academic research discovery. Crawls university faculty pages
-and produces clean, human-readable summaries of professor research interests,
-recent publications, and undergraduate research opportunities.
-
-### Features
-- Multi-page crawling per professor profile
-- Structured ProfessorProfile schema
-- Dual output: Markdown summaries for human review + JSON for further processing
-- Fully unit-tested formatting layer
-
-### Stack
-Python · Web scraping · NLP · CLI · Unit testing
-`,
-	},
-	{
-		Title:     "neurosnake-rl",
-		Slug:      "neurosnake-rl",
+		Title:     "Surose OS",
+		Slug:      "surose-os",
 		Year:      "2026",
 		Category:  "personal",
-		Tags:      []string{"Python", "PyTorch", "Deep Q-Learning", "SQLite", "CNN", "Reinforcement Learning"},
-		ShortDesc: "End-to-end reinforcement learning pipeline — CNN-based DQN agent trained to play Snake, with full experiment tracking infrastructure.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/neurosnake-rl"}},
-		LongDesc: `## neurosnake-rl
+		Tags:      []string{"Go", "Wish", "Bubbletea", "Lipgloss", "Glamour", "SSH"},
+		ShortDesc: "The SSH portfolio TUI you're currently inside.",
+		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/surose-os"}},
+		LongDesc: `## Surose OS
 
-Started as a Snake game. Became a full reinforcement learning research pipeline.
+The thing you're using right now.
 
-Most RL tutorials stop at "the model trains." Real ML work requires reproducibility,
-experiment tracking, and structured evaluation. This project builds all of that from scratch.
-
-### The agent
-- Convolutional Neural Network with frame stacking for temporal awareness
-- Double DQN to reduce Q-value overestimation
-- Target network stabilization + replay buffer training
-- Shaped reward signal: Manhattan distance, food bonuses, collision penalties, step cost to discourage looping
-- Device-aware: runs on MPS, CUDA, or CPU with no code changes
-
-### The pipeline
-- Every run logged to SQLite with full hyperparameter metadata
-- Auto-generated reward curves and convergence detection
-- Experiment leaderboard for comparing runs objectively
-- Offline analytics CLI for hyperparameter breakdowns and checkpoint rankings
-- Deterministic seeding across Python, NumPy, and PyTorch for reproducible results
+Built to prove a point: terminal interfaces don't have to look like 1985.
+Also built because I wanted to learn Go, and the best way I know how to learn
+something is to build something real with it.
 
 ### Stack
-Python · PyTorch · NumPy · SQLite · Matplotlib · CNN · Double DQN
+Go · Wish · Bubbletea · Lipgloss · Glamour
+
+### Hosting
+DigitalOcean Droplet · systemd · sanikasurose.com
+
+### Source
+Open source. Link below.
+`,
+	},
+	{
+		Title:     "Committr",
+		Slug:      "committr",
+		Year:      "2026",
+		Category:  "personal",
+		Tags:      []string{"Java", "Spring Boot", "PostgreSQL", "Docker", "CI/CD", "Jenkins"},
+		ShortDesc: "Full-stack developer analytics platform for tracking GitHub activity, engineering productivity metrics, and repository insights.",
+		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/committr"}},
+		LongDesc: `## Committr
+
+A full-stack developer analytics platform for tracking GitHub activity,
+engineering productivity metrics, and repository insights.
+
+### What I built
+- Scalable REST APIs and relational database models using Spring Boot and PostgreSQL
+- Automated ETL-style processing pipelines and real-time analytics dashboards
+- Docker-based deployment with CI/CD integration and modular backend architecture
+
+### Stack
+Java · Spring Boot · PostgreSQL · Docker · CI/CD · Jenkins
+`,
+	},
+	{
+		Title:     "Pulp",
+		Slug:      "pulp",
+		Year:      "2026",
+		Category:  "personal",
+		Tags:      []string{"Python", "Claude Haiku", "OCR", "Tesseract", "Docker", "CLI", "LLMs"},
+		ShortDesc: "Local-first CLI that converts PDFs (text-layer or scanned) into clean, semantically structured Markdown for LLM/RAG ingestion.",
+		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/pulp"}},
+		LongDesc: `## Pulp
+
+A local-first CLI that converts PDFs — text-layer or scanned — into clean,
+semantically structured Markdown suitable for LLM and RAG ingestion.
+
+Most PDF-to-text tools produce noisy output that breaks downstream pipelines.
+Pulp cleans, structures, and optionally uses an LLM to semantically organize
+the result. It never crashes on LLM failure — falls back to heuristic output gracefully.
+
+### Features
+- Handles both text-layer and scanned PDFs (OCR via Tesseract + pdf2image)
+- Optional LLM structuring stage via Claude Haiku (Anthropic API)
+- --diff flag for token counts and per-stage cleaning summary
+- Multi-column layout heuristic (auto-detects two-column PDFs)
+- Docker support: Poppler + Tesseract bundled, runs as non-root user
+- 86% test coverage · 36 tests passing · 0 code smells
+
+### Stack
+Python 3.11 · Claude Haiku · Tesseract · Poppler · Docker · uv
 `,
 	},
 	{
 		Title:     "Sanika-UI",
 		Slug:      "sanika-ui",
-		Year:      "2025",
+		Year:      "2026",
 		Category:  "personal",
 		Tags:      []string{"React", "TypeScript", "CSS Variables", "Component Library", "Design Systems"},
 		ShortDesc: "Lightweight React UI component library exploring reusable component architecture and theme systems.",
@@ -308,80 +302,86 @@ Java 17 · Spring Boot 3.5.12 · Redis 7 · Docker · Maven · JUnit 5
 `,
 	},
 	{
-		Title:     "Pulp",
-		Slug:      "pulp",
+		Title:     "neurosnake-rl",
+		Slug:      "neurosnake-rl",
 		Year:      "2026",
 		Category:  "personal",
-		Tags:      []string{"Python", "Claude Haiku", "OCR", "Tesseract", "Docker", "CLI", "LLMs"},
-		ShortDesc: "Local-first CLI that converts PDFs (text-layer or scanned) into clean, semantically structured Markdown for LLM/RAG ingestion.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/pulp"}},
-		LongDesc: `## Pulp
+		Tags:      []string{"Python", "PyTorch", "Deep Q-Learning", "SQLite", "CNN", "Reinforcement Learning"},
+		ShortDesc: "End-to-end reinforcement learning pipeline — CNN-based DQN agent trained to play Snake, with full experiment tracking infrastructure.",
+		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/neurosnake-rl"}},
+		LongDesc: `## neurosnake-rl
 
-A local-first CLI that converts PDFs — text-layer or scanned — into clean,
-semantically structured Markdown suitable for LLM and RAG ingestion.
+Started as a Snake game. Became a full reinforcement learning research pipeline.
 
-Most PDF-to-text tools produce noisy output that breaks downstream pipelines.
-Pulp cleans, structures, and optionally uses an LLM to semantically organize
-the result. It never crashes on LLM failure — falls back to heuristic output gracefully.
+Most RL tutorials stop at "the model trains." Real ML work requires reproducibility,
+experiment tracking, and structured evaluation. This project builds all of that from scratch.
+
+### The agent
+- Convolutional Neural Network with frame stacking for temporal awareness
+- Double DQN to reduce Q-value overestimation
+- Target network stabilization + replay buffer training
+- Shaped reward signal: Manhattan distance, food bonuses, collision penalties, step cost to discourage looping
+- Device-aware: runs on MPS, CUDA, or CPU with no code changes
+
+### The pipeline
+- Every run logged to SQLite with full hyperparameter metadata
+- Auto-generated reward curves and convergence detection
+- Experiment leaderboard for comparing runs objectively
+- Offline analytics CLI for hyperparameter breakdowns and checkpoint rankings
+- Deterministic seeding across Python, NumPy, and PyTorch for reproducible results
+
+### Stack
+Python · PyTorch · NumPy · SQLite · Matplotlib · CNN · Double DQN
+`,
+	},
+	{
+		Title:     "Outreach Research Scraper",
+		Slug:      "outreach-research-scraper",
+		Year:      "2026",
+		Category:  "personal",
+		Tags:      []string{"Python", "Web Scraping", "NLP", "CLI"},
+		ShortDesc: "CLI tool that crawls university faculty pages and produces clean summaries of professor research interests and undergraduate opportunities — that's how I found Dr Charles Welch!",
+		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/academic-research-scraper"}},
+		LongDesc: `## Outreach Research Scraper
+
+A Python CLI tool for academic research discovery. Crawls university faculty pages
+and produces clean, human-readable summaries of professor research interests,
+recent publications, and undergraduate research opportunities.
 
 ### Features
-- Handles both text-layer and scanned PDFs (OCR via Tesseract + pdf2image)
-- Optional LLM structuring stage via Claude Haiku (Anthropic API)
-- --diff flag for token counts and per-stage cleaning summary
-- Multi-column layout heuristic (auto-detects two-column PDFs)
-- Docker support: Poppler + Tesseract bundled, runs as non-root user
-- 86% test coverage · 36 tests passing · 0 code smells
+- Multi-page crawling per professor profile
+- Structured ProfessorProfile schema
+- Dual output: Markdown summaries for human review + JSON for further processing
+- Fully unit-tested formatting layer
 
 ### Stack
-Python 3.11 · Claude Haiku · Tesseract · Poppler · Docker · uv
+Python · Web scraping · NLP · CLI · Unit testing
 `,
 	},
 	{
-		Title:     "Committr",
-		Slug:      "committr",
-		Year:      "2026",
-		Category:  "personal",
-		Tags:      []string{"Java", "Spring Boot", "PostgreSQL", "Docker", "CI/CD", "Jenkins"},
-		ShortDesc: "Full-stack developer analytics platform for tracking GitHub activity, engineering productivity metrics, and repository insights.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/committr"}},
-		LongDesc: `## Committr
-
-A full-stack developer analytics platform for tracking GitHub activity,
-engineering productivity metrics, and repository insights.
-
-### What I built
-- Scalable REST APIs and relational database models using Spring Boot and PostgreSQL
-- Automated ETL-style processing pipelines and real-time analytics dashboards
-- Docker-based deployment with CI/CD integration and modular backend architecture
-
-### Stack
-Java · Spring Boot · PostgreSQL · Docker · CI/CD · Jenkins
-`,
-	},
-	{
-		Title:     "Surose OS",
-		Slug:      "surose-os",
+		Title:     "Typing Test",
+		Slug:      "typing-test",
 		Year:      "2025",
 		Category:  "personal",
-		Tags:      []string{"Go", "Wish", "Bubbletea", "Lipgloss", "Glamour", "SSH"},
-		ShortDesc: "The SSH portfolio TUI you're currently inside.",
-		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/surose-os"}},
-		LongDesc: `## Surose OS
+		Tags:      []string{"Python", "CustomTkinter", "GUI"},
+		ShortDesc: "Feature-rich graphical typing trainer with real-time analytics, session history, and per-character feedback.",
+		Links:     []Link{{Label: "GitHub", URL: "github.com/sanikasurose/typing-test"}},
+		LongDesc: `## Typing Test
 
-The thing you're using right now.
+A fully-featured graphical typing trainer built with Python and CustomTkinter.
+Migrated from a terminal-based v1 into a multi-screen GUI with persistent session tracking.
 
-Built to prove a point: terminal interfaces don't have to look like 1985.
-Also built because I wanted to learn Go, and the best way I know how to learn
-something is to build something real with it.
+### Features
+- Real-time per-character accuracy highlighting (green correct, red incorrect)
+- Live WPM calculation and accuracy percentage
+- Per-character mistake analytics — identifies your most frequently mistyped keys
+- Average keystroke delay tracking for consistency analysis
+- Persistent session history across runs (sessions.json)
+- Performance profile classification: Balanced / Fast but inaccurate / Accurate but slow / Needs consistency
+- Multi-screen flow: start → typing → results → progress summary
 
 ### Stack
-Go · Wish · Bubbletea · Lipgloss · Glamour
-
-### Hosting
-DigitalOcean Droplet · systemd · sanikasurose.com
-
-### Source
-Open source. Link below.
+Python · CustomTkinter · Session analytics · Modular GUI architecture
 `,
 	},
 	{
