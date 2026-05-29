@@ -5,6 +5,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/sanikasurose/surose-os/internal/content"
+	"github.com/sanikasurose/surose-os/internal/guestbook"
+	"github.com/sanikasurose/surose-os/internal/stats"
 )
 
 type screen int
@@ -12,42 +14,71 @@ type screen int
 const (
 	screenBoot screen = iota
 	screenHome
+	screenProjectsMenu
 	screenProjects
 	screenProjectDetail
 	screenExperience
 	screenAbout
 	screenContact
+	screenGuestbook
 )
 
 // RootModel is the top-level Bubbletea model. It owns the screen router,
-// window dimensions, and the hisanika> prompt.
+// window dimensions, the hisanika> prompt, and the guestbook screen.
 type RootModel struct {
 	current       screen
 	width, height int
 
 	boot          BootModel
 	home          HomeModel
+	projectsMenu  ProjectsMenuModel
 	projects      ProjectsModel
 	projectDetail ProjectDetailModel
 	experience    ExperienceModel
 	about         AboutModel
 	contact       ContactModel
+	guestbook     GuestbookModel
 
 	promptFocused bool
 	promptInput   string
 	promptOutput  string
 }
 
-func NewRootModel() RootModel {
+// NewRootModel takes the per-session stats snapshot AND the shared guestbook
+// store. Both come from the handler (see handler.go MakeHandler).
+func NewRootModel(snap stats.Snapshot, gb *guestbook.Store) RootModel {
+	handle := visitorHandle(snap.Visitor)
 	return RootModel{
-		current:    screenBoot,
-		boot:       NewBootModel(),
-		home:       NewHomeModel(),
-		projects:   NewProjectsModel(),
-		experience: NewExperienceModel(),
-		about:      NewAboutModel(),
-		contact:    NewContactModel(),
+		current:      screenBoot,
+		boot:         NewBootModel(),
+		home:         NewHomeModel(snap),
+		projectsMenu: NewProjectsMenuModel(),
+		projects:     NewProjectsModel("hackathon"),
+		experience:   NewExperienceModel(),
+		about:        NewAboutModel(),
+		contact:      NewContactModel(),
+		guestbook:    NewGuestbookModel(gb, handle),
 	}
+}
+
+// visitorHandle formats "visitor_NNN", zero-padded to 3 digits.
+// 4-digit (and higher) numbers grow naturally.
+func visitorHandle(n int) string {
+	if n <= 0 {
+		return "visitor_???"
+	}
+	return "visitor_" + zeroPad(n, 3)
+}
+
+func zeroPad(n, width int) string {
+	s := ""
+	for v := n; v > 0; v /= 10 {
+		s = string(rune('0'+v%10)) + s
+	}
+	for len(s) < width {
+		s = "0" + s
+	}
+	return s
 }
 
 func (m RootModel) Init() tea.Cmd {
@@ -67,8 +98,21 @@ func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.boot = newBoot
 		if m.boot.Done() {
 			m.current = screenHome
+			// Kick off the contribution-grid draw-in animation as soon as
+			// home becomes visible — only when GitHub data loaded successfully.
+			cmds := []tea.Cmd{cmd}
+			if m.home.StatsAvailable() {
+				cmds = append(cmds, m.home.StartGridAnimation())
+			}
+			return m, tea.Batch(cmds...)
 		}
 		return m, cmd
+
+	case GridTickMsg:
+		// Forward all grid-animation ticks to the home model.
+		var hcmd tea.Cmd
+		m.home, hcmd = m.home.Update(msg)
+		return m, hcmd
 
 	case tea.KeyMsg:
 		if m.promptFocused {
@@ -79,14 +123,36 @@ func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 
-		if msg.String() == ":" {
+		// Reserve `:` for the global prompt EXCEPT on the guestbook screen,
+		// where the user is typing into a textinput and colons are legitimate.
+		if msg.String() == ":" && m.current != screenGuestbook {
 			m.promptFocused = true
 			m.promptInput = ""
 			m.promptOutput = ""
 			return m, nil
 		}
 
+		// Guestbook handles its own keys via its embedded textinput.
+		if m.current == screenGuestbook {
+			var cmd tea.Cmd
+			m.guestbook, cmd = m.guestbook.Update(msg)
+			if m.guestbook.ShouldExit() {
+				m.guestbook = m.guestbook.ResetExit()
+				m.current = screenHome
+				return m, nil
+			}
+			return m, cmd
+		}
+
 		return m.updateScreen(msg)
+	}
+
+	// Forward unhandled messages (textinput cursor blink, paste, etc.) to
+	// the active screen if it cares. Today, only the guestbook does.
+	if m.current == screenGuestbook {
+		var cmd tea.Cmd
+		m.guestbook, cmd = m.guestbook.Update(msg)
+		return m, cmd
 	}
 
 	return m, nil
@@ -99,35 +165,62 @@ func (m RootModel) updateScreen(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "q", "ctrl+c":
 			return m, tea.Quit
-		case "up", "k":
+		case "left", "h", "up", "k":
 			m.home = m.home.CursorUp()
-		case "down", "j":
+		case "right", "l", "down", "j":
 			m.home = m.home.CursorDown()
 		case "1":
-			m.current = screenProjects
+			m.current = screenAbout
 		case "2":
 			m.current = screenExperience
 		case "3":
-			m.current = screenAbout
+			m.current = screenProjectsMenu
 		case "4":
+			return m.enterGuestbook()
+		case "5":
 			m.current = screenContact
 		case "enter", " ":
 			switch m.home.Selected() {
 			case 0:
-				m.current = screenProjects
+				m.current = screenAbout
 			case 1:
 				m.current = screenExperience
 			case 2:
-				m.current = screenAbout
+				m.current = screenProjectsMenu
 			case 3:
+				return m.enterGuestbook()
+			case 4:
 				m.current = screenContact
 			}
 		}
 
+	case screenProjectsMenu:
+		switch msg.String() {
+		case "q":
+			return m, tea.Quit
+		case "esc":
+			m.current = screenHome
+		case "up", "k":
+			m.projectsMenu = m.projectsMenu.CursorUp()
+		case "down", "j":
+			m.projectsMenu = m.projectsMenu.CursorDown()
+		case "1":
+			m.projects = NewProjectsModel("hackathon")
+			m.current = screenProjects
+		case "2":
+			m.projects = NewProjectsModel("personal")
+			m.current = screenProjects
+		case "enter":
+			m.projects = NewProjectsModel(m.projectsMenu.Category())
+			m.current = screenProjects
+		}
+
 	case screenProjects:
 		switch msg.String() {
-		case "q", "esc":
-			m.current = screenHome
+		case "q":
+			return m, tea.Quit
+		case "esc":
+			m.current = screenProjectsMenu
 		case "up", "k":
 			m.projects = m.projects.CursorUp()
 		case "down", "j":
@@ -140,8 +233,12 @@ func (m RootModel) updateScreen(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	case screenProjectDetail:
 		switch msg.String() {
-		case "q", "esc":
+		case "q":
+			return m, tea.Quit
+		case "esc":
 			m.current = screenProjects
+		case "o":
+			m.projectDetail, _ = m.projectDetail.CopyLink()
 		case "down", "j":
 			m.projectDetail = m.projectDetail.ScrollDown()
 		case "up", "k":
@@ -178,47 +275,64 @@ func (m RootModel) updateScreen(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+// enterGuestbook refreshes the message list from the store and switches screens.
+// Returns the textinput cursor-blink command so the input cursor blinks
+// immediately rather than waiting for the next tick.
+func (m RootModel) enterGuestbook() (tea.Model, tea.Cmd) {
+	m.guestbook = m.guestbook.Refresh()
+	m.current = screenGuestbook
+	return m, m.guestbook.Init()
+}
+
 func (m RootModel) updatePrompt(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	switch msg.Type {
-	case tea.KeyEsc:
+	switch msg.String() {
+	case "esc":
 		m.promptFocused = false
 		m.promptInput = ""
 		m.promptOutput = ""
 		return m, nil
 
-	case tea.KeyEnter:
+	case "enter":
 		raw := strings.TrimSpace(m.promptInput)
 		m.promptInput = ""
 		m, cmd := m.execPromptCmd(raw)
 		return m, cmd
 
-	case tea.KeyBackspace, tea.KeyDelete:
+	case "backspace", "ctrl+h":
 		if len(m.promptInput) > 0 {
-			m.promptInput = m.promptInput[:len(m.promptInput)-1]
+			runes := []rune(m.promptInput)
+			m.promptInput = string(runes[:len(runes)-1])
 		}
 		return m, nil
 
-	case tea.KeyRunes:
-		m.promptInput += string(msg.Runes)
-		return m, nil
+	default:
+		s := msg.String()
+		if len([]rune(s)) == 1 {
+			r := []rune(s)[0]
+			if r >= 32 && r != 127 {
+				m.promptInput += s
+				return m, nil
+			}
+		}
+		if len(msg.Runes) > 0 {
+			m.promptInput += string(msg.Runes)
+			return m, nil
+		}
 	}
 
 	return m, nil
 }
 
-// execPromptCmd handles all hisanika> commands. Returns an updated model and
-// an optional tea.Cmd (nil unless quitting).
 func (m RootModel) execPromptCmd(input string) (RootModel, tea.Cmd) {
 	if input == "" {
 		m.promptOutput = ""
 		return m, nil
 	}
 
-	// Handle "open <slug>" separately.
 	if strings.HasPrefix(input, "open") {
 		parts := strings.Fields(input)
 		if len(parts) < 2 {
-			m.promptOutput = "usage: open <slug>"
+			m.promptOutput = "usage: open <project>"
 			return m, nil
 		}
 		slug := parts[1]
@@ -237,9 +351,9 @@ func (m RootModel) execPromptCmd(input string) (RootModel, tea.Cmd) {
 
 	switch input {
 	case "help":
-		m.promptOutput = "commands: help · projects · experience · about · contact · open <slug> · clear · quit"
+		m.promptOutput = "commands: help · projects · experience · about · guestbook · contact · open <project> · clear · quit"
 	case "projects":
-		m.current = screenProjects
+		m.current = screenProjectsMenu
 		m.promptFocused = false
 		m.promptOutput = ""
 	case "experience":
@@ -248,6 +362,11 @@ func (m RootModel) execPromptCmd(input string) (RootModel, tea.Cmd) {
 		m.promptOutput = ""
 	case "about":
 		m.current = screenAbout
+		m.promptFocused = false
+		m.promptOutput = ""
+	case "guestbook":
+		m.guestbook = m.guestbook.Refresh()
+		m.current = screenGuestbook
 		m.promptFocused = false
 		m.promptOutput = ""
 	case "contact":
@@ -275,6 +394,8 @@ func (m RootModel) View() string {
 	switch m.current {
 	case screenHome:
 		body = m.home.View(m.width)
+	case screenProjectsMenu:
+		body = m.projectsMenu.View(m.width)
 	case screenProjects:
 		body = m.projects.View(m.width)
 	case screenProjectDetail:
@@ -285,30 +406,24 @@ func (m RootModel) View() string {
 		body = m.about.View(m.width, m.height)
 	case screenContact:
 		body = m.contact.View(m.width)
+	case screenGuestbook:
+		body = m.guestbook.View(m.width, m.height)
+	}
+
+	// Guestbook handles its own bottom — don't double-render the hisanika> bar
+	// while the user is typing into the textinput.
+	if m.current == screenGuestbook {
+		return body
 	}
 
 	return body + "\n" + m.renderPrompt()
 }
 
+// renderPrompt delegates to the styles.go PromptBar helper.
 func (m RootModel) renderPrompt() string {
-	var sb strings.Builder
-	sb.WriteString("  ")
-	sb.WriteString(GhostText.Render(strings.Repeat("─", 40)))
-	sb.WriteString("\n  ")
-	sb.WriteString(PromptLabel.Render("hisanika>"))
-	sb.WriteString(" ")
-
+	state := "idle"
 	if m.promptFocused {
-		sb.WriteString(PromptInput.Render(m.promptInput))
-		sb.WriteString(AccentText.Render("█"))
-	} else {
-		sb.WriteString(GhostText.Render("press : to type a command"))
+		state = "typing"
 	}
-
-	if m.promptOutput != "" {
-		sb.WriteString("\n  ")
-		sb.WriteString(PromptOutput.Render(m.promptOutput))
-	}
-
-	return sb.String()
+	return PromptBar(state, m.promptInput, m.promptOutput)
 }
