@@ -2,8 +2,6 @@ package ui
 
 import (
 	"strings"
-
-	"github.com/sanikasurose/surose-os/internal/content"
 )
 
 type AboutModel struct {
@@ -13,24 +11,76 @@ type AboutModel struct {
 func NewAboutModel() AboutModel { return AboutModel{} }
 
 func (m AboutModel) View(width, height int) string {
-	var sb strings.Builder
+	var lines []string
+	add := func(s string) { lines = append(lines, s) }
 
-	sb.WriteString(ScreenPad.Render(ScreenTitle.Render("about")))
-	sb.WriteString("\n\n")
+	pad := strings.Repeat(" ", ScreenLeftPad)
+	indent := strings.Repeat(" ", ScreenLeftPad+2)
 
-	lines := strings.Split(content.AboutText, "\n")
+	// Header.
+	add(ScreenHeader("about", "hisanika ╱ about", width))
+	add("")
+
+	// Name + subtitle.
+	add(pad + ScreenTitle.Render("Sanika Surose"))
+	add(pad + MetadataLabel.Render("software engineer · mcmaster university, class of 2029"))
+	add("")
+
+	// ── now ───────────────────────────────────────────────────────────
+	add(pad + SectionLabel("now"))
+	add("")
+
+	nowLines := []string{
+		"currently a Software Engineer Intern at TranQuility Inc.,",
+		"building backend APIs, automation workflows, and full-stack",
+		"features with FastAPI and React/Next.js. also an Undergraduate",
+		"Research Assistant at McMaster — fine-tuning transformer-based",
+		"NLP models under Dr. Charles Welch.",
+	}
+	for _, l := range nowLines {
+		add(indent + Quote(l))
+	}
+	add("")
+
+	// ── how ───────────────────────────────────────────────────────────
+	add(pad + SectionLabel("how"))
+	add("")
+
+	add(indent + BodyText.Render("second-year software engineering co-op student. i work across"))
+	add(indent + BodyText.Render("the stack — backends, distributed systems, LLM tooling, and"))
+	add(indent + BodyText.Render("occasionally things like this."))
+	add("")
+	add(indent + MetadataLabel.Render("built this in Go, which i'd never used before. that was the point."))
+	add("")
+
+	// ── education ─────────────────────────────────────────────────────
+	add(pad + SectionLabel("education"))
+	add("")
+
+	school := "McMaster University"
+	degree := "B.Eng. software engineering (co-op) · 2029"
+	gap := width - ScreenLeftPad - 2 - len(school) - len(degree)
+	if gap < 2 {
+		gap = 2
+	}
+	add(indent +
+		BodyText.Render(school) +
+		strings.Repeat(" ", gap) +
+		MetadataLabel.Render(degree))
+	add("")
+
+	// Apply scroll.
 	visible := lines
 	if m.scrollTop < len(lines) {
 		visible = lines[m.scrollTop:]
 	}
-	for _, l := range visible {
-		sb.WriteString("  ")
-		sb.WriteString(BodyText.Render(l))
-		sb.WriteString("\n")
-	}
 
+	var sb strings.Builder
+	for _, l := range visible {
+		sb.WriteString(l + "\n")
+	}
 	sb.WriteString("\n")
-	sb.WriteString(KeyHint.Render("  j/k  scroll    esc  back"))
+	sb.WriteString(HelpHint("j/k scroll", "esc back"))
 
 	return sb.String()
 }

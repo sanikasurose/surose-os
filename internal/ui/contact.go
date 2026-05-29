@@ -14,16 +14,36 @@ func (m ContactModel) View(width int) string {
 	var sb strings.Builder
 	c := content.Contact
 
-	sb.WriteString(ScreenPad.Render(ScreenTitle.Render("contact")))
+	pad := strings.Repeat(" ", ScreenLeftPad)
+
+	sb.WriteString(ScreenHeader("contact", "hisanika ╱ contact", width))
+	sb.WriteString("\n")
+
+	sb.WriteString(pad + MetadataLabel.Render("the best way to reach me is email."))
 	sb.WriteString("\n\n")
 
-	sb.WriteString("  " + MetadataLabel.Render("email     ") + BodyText.Render(c.Email) + "\n")
-	sb.WriteString("  " + MetadataLabel.Render("linkedin  ") + BodyText.Render(c.LinkedIn) + "\n")
-	sb.WriteString("  " + MetadataLabel.Render("github    ") + BodyText.Render(c.GitHub) + "\n")
+	// Contact rows — label + value, with fixed-width label column.
+	type row struct{ label, value string }
+	rows := []row{
+		{"email", c.Email},
+		{"linkedin", c.LinkedIn},
+		{"github", c.GitHub},
+	}
+	// Label column width = longest label + 2 spaces padding.
+	labelW := 0
+	for _, r := range rows {
+		if len(r.label) > labelW {
+			labelW = len(r.label)
+		}
+	}
+	for _, r := range rows {
+		label := MetadataLabel.Render(r.label)
+		spacing := strings.Repeat(" ", labelW-len(r.label)+3)
+		sb.WriteString(pad + label + spacing + BodyText.Render(r.value) + "\n")
+	}
+
 	sb.WriteString("\n")
-	sb.WriteString("  " + MetadataLabel.Render(c.Note) + "\n")
-	sb.WriteString("\n")
-	sb.WriteString(KeyHint.Render("  esc  back"))
+	sb.WriteString(HelpHint("esc back"))
 
 	return sb.String()
 }

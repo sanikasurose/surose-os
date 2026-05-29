@@ -60,32 +60,39 @@ func (m BootModel) View() string {
 	subtitleStep := nameEnd + bootPause2
 	dividerStep := subtitleStep + bootSubtTk + bootPause3
 
-	sb.WriteString("\n\n\n")
+	// Five blank rows above to vertically centre on an 18-row viewport.
+	sb.WriteString("\n\n\n\n\n")
 
-	// Name — reveal one character per step during typing phase.
+	// Name — reveal one character per step during the typing phase; cursor visible while typing.
+	pad := strings.Repeat(" ", ScreenLeftPad)
 	if m.step >= nameStart {
 		shown := m.step - nameStart
 		if shown > len(bootName) {
 			shown = len(bootName)
 		}
-		sb.WriteString("  ")
+		sb.WriteString(pad)
 		sb.WriteString(BootName.Render(bootName[:shown]))
+		// Accent-coloured block cursor while the name is still being typed.
+		if shown < len(bootName) {
+			sb.WriteString(AccentText.Render("█"))
+		}
 	}
 
 	sb.WriteString("\n")
 
 	// Subtitle.
 	if m.step >= subtitleStep {
-		sb.WriteString("  ")
+		sb.WriteString(pad)
 		sb.WriteString(BootSubtitle.Render(bootSubtitle))
 	}
 
 	sb.WriteString("\n")
 
-	// Divider.
+	// Divider — 40 ghost dashes, matching BootFrame phase-3 mockup.
 	if m.step >= dividerStep {
-		sb.WriteString("\n  ")
-		sb.WriteString(GhostText.Render(strings.Repeat("─", 38)))
+		sb.WriteString("\n")
+		sb.WriteString(pad)
+		sb.WriteString(GhostText.Render(strings.Repeat("─", 40)))
 	}
 
 	return sb.String()
