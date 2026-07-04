@@ -31,13 +31,27 @@ func (m AboutModel) View(width, height int) string {
 	add("")
 
 	nowLines := []string{
-		"currently a Software Engineer Intern at TranQuility Inc.,",
-		"building backend APIs, automation workflows, and full-stack",
-		"features with FastAPI and React/Next.js. also an Undergraduate",
-		"Research Assistant at McMaster — fine-tuning transformer-based",
-		"NLP models under Dr. Charles Welch.",
+		"i'm a Software Engineer Intern at TranQuility Inc., an AI startup, where I",
+		"build backend APIs, RAG data pipelines, and full-stack features using",
+		"FastAPI, React, and Azure. My work has included shipping a production RAG",
+		"pipeline (Python + Qdrant) spanning multiple document formats, cutting AI",
+		"feature costs significantly through model and token optimization,",
+		"resolving a production outage caused by async I/O bottlenecks, and",
+		"migrating our deployment workflow from a multi-step manual process to a",
+		"streamlined Azure Container Registry pipeline.",
+		"",
+		"i'm also an Undergraduate Research Assistant at McMaster University under",
+		"Dr. Charles Welch, working on NLP and LLM evaluation. I've built a crash-",
+		"safe, resumable inference pipeline serving Qwen3-8B via vLLM on a 4×H100",
+		"GPU cluster, and designed zero-shot and few-shot emotion classification",
+		"experiments on the GoEmotions dataset, benchmarking model performance",
+		"across prompting strategies.",
 	}
 	for _, l := range nowLines {
+		if l == "" {
+			add("")
+			continue
+		}
 		add(indent + Quote(l))
 	}
 	add("")
