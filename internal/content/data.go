@@ -413,16 +413,16 @@ Python · OOP · CAD · Actuator control · Motion simulation · Hardware integr
 var Experience = []ExperienceEntry{
 	{
 		Kind:     "work",
-		Title:    "Software Engineer Intern",
+		Title:    "Software Engineer Intern - Intern Team Lead",
 		Org:      "TranQuility Inc.",
 		Location: "Toronto, ON (Remote)",
 		Dates:    "May 2026 – Present",
 		Bullets: []string{
-			"Developing backend APIs and automation workflows using FastAPI, PostgreSQL, and Redis",
-			"Building full-stack application features with React/Next.js in a fast-paced startup environment",
-			"Integrating external APIs and supporting deployment, debugging, monitoring, and system improvements",
-			"Contributing to AI-driven application workflows and real-time user operations",
-			"Collaborating in Agile development cycles with ownership over feature implementation and testing",
+			"Cut AI feature operating costs 40x by switching to smaller, cheaper models and optimizing token usage across agentic Python pipelines (LangChain/LangGraph)",
+			"Reduced average agent latency from 60+ seconds to 5–10 seconds by parallelizing requests and caching agent outputs",
+			"Shipped a production RAG data pipeline for document search spanning 4 file formats and 6 categories, engineering chunking, embedding, and indexing logic in Python with a Qdrant vector database",
+			"Resolved a production outage caused by a blocking async I/O bottleneck, delivering a 5–10x speedup through parallelized processing and an engine swap",
+			"Promoted to Intern Team Lead, directing feature development and code reviews for a team of 4+ interns while translating stakeholder requirements into system design specs across daily Agile stand-ups",
 		},
 	},
 	{
