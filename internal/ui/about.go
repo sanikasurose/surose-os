@@ -64,8 +64,6 @@ func (m AboutModel) View(width, height int) string {
 	add(indent + Quote("the stack — backends, distributed systems, LLM tooling, and"))
 	add(indent + Quote("occasionally things like this."))
 	add("")
-	add(indent + MetadataLabel.Render("built this in Go, which i'd never used before. that was the point."))
-	add("")
 
 	// ── elsewhere ─────────────────────────────────────────────────────
 	add(pad + SectionLabel("elsewhere"))
@@ -89,14 +87,17 @@ func (m AboutModel) View(width, height int) string {
 
 	school := "McMaster University"
 	degree := "B.Eng. software engineering (co-op) · 2029"
-	gap := width - ScreenLeftPad - 2 - len(school) - len(degree)
+	quotePrefixWidth := 3 // GlyphQuoteBar + two spaces
+	gap := width - ScreenLeftPad - 2 - quotePrefixWidth - len(school) - len(degree)
 	if gap < 2 {
 		gap = 2
 	}
-	add(indent +
+	add(indent + QuoteBar.Render(GlyphQuoteBar) + "  " +
 		BodyText.Render(school) +
 		strings.Repeat(" ", gap) +
 		MetadataLabel.Render(degree))
+	add("")
+	add(indent + MetadataLabel.Render("built this in Go, which i'd never used before. that was the point."))
 	add("")
 
 	// Apply scroll.
