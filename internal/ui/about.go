@@ -67,6 +67,22 @@ func (m AboutModel) View(width, height int) string {
 	add(indent + MetadataLabel.Render("built this in Go, which i'd never used before. that was the point."))
 	add("")
 
+	// ── elsewhere ─────────────────────────────────────────────────────
+	add(pad + SectionLabel("elsewhere"))
+	add("")
+
+	elsewhereLines := []string{
+		"sponsorship exec for DeltaHacks, McMaster's largest hackathon with 600+",
+		"attendees. embedded subteam for McMaster Aerial Robotics and Drone Club,",
+		"competing in the AEAC Student UAS Competition. building on the software",
+		"subteam for McMaster Design League, McMaster's largest CAD-a-thon. outreach",
+		"for McMaster Advanced Space Systems.",
+	}
+	for _, l := range elsewhereLines {
+		add(indent + Quote(l))
+	}
+	add("")
+
 	// ── education ─────────────────────────────────────────────────────
 	add(pad + SectionLabel("education"))
 	add("")
