@@ -461,11 +461,10 @@ Display order: most recent first.
 - Dates: May 2026 – Present
 - Research area: Natural Language Processing (NLP) and Applied Machine Learning
 - Bullets:
-  - Fine-tuning and evaluating transformer-based NLP models on large-scale text datasets using Python and PyTorch
-  - Building reproducible data-processing and model-training pipelines for experimentation, benchmarking, and evaluation workflows
-  - Analyzing model outputs, accuracy metrics, and performance trends across multiple datasets and training configurations
-  - Working with modern ML and LLM workflows including data preprocessing, tokenization, and inference evaluation
-  - Documenting experimental methodologies, technical findings, and research workflows in collaborative academic environments
+  - Built a crash-safe, resumable inference pipeline serving Qwen3-8B via vLLM on a 4×H100 GPU cluster, processing 5,427+ samples with JSONL logging keyed by comment ID for fault recovery
+  - Unblocked vLLM compilation on shared HPC infrastructure by resolving low-level CUDA/Triton build failures (missing libcuda.so.1, Python headers) via manual symlinking and RPM extraction
+  - Designed and evaluated a zero-shot multi-label emotion classification pipeline across 5,427 samples and 28 categories (GoEmotions), achieving 0.328 Micro F1 / 0.270 Macro F1 as a baseline for cross-method comparison against fine-tuning and from-scratch approaches
+  - Developing a rater-matched few-shot prompting strategy, sampling in-context examples from an annotator's own history via round-robin diversity selection across emotion classes to improve on the zero-shot baseline
 
 ---
 
