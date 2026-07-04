@@ -60,9 +60,9 @@ func (m AboutModel) View(width, height int) string {
 	add(pad + SectionLabel("how"))
 	add("")
 
-	add(indent + BodyText.Render("second-year software engineering co-op student. i work across"))
-	add(indent + BodyText.Render("the stack — backends, distributed systems, LLM tooling, and"))
-	add(indent + BodyText.Render("occasionally things like this."))
+	add(indent + Quote("third-year software engineering co-op student. i work across"))
+	add(indent + Quote("the stack — backends, distributed systems, LLM tooling, and"))
+	add(indent + Quote("occasionally things like this."))
 	add("")
 	add(indent + MetadataLabel.Render("built this in Go, which i'd never used before. that was the point."))
 	add("")
