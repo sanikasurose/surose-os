@@ -479,19 +479,3 @@ var Contact = ContactInfo{
 	GitHub:   "github.com/sanikasurose",
 	Note:     "Email is the best way to reach me.",
 }
-
-const AboutText = `Sanika Surose
-Software Engineer · McMaster University, Class of 2029
-
-Currently a Software Engineer Intern at TranQuility Inc., building backend APIs,
-automation workflows, and full-stack features with FastAPI and React/Next.js.
-Also an Undergraduate Research Assistant at McMaster, fine-tuning transformer-based
-NLP models and building reproducible ML pipelines under Dr. Charles Welch.
-
-Second-year Software Engineering co-op student. I work across the stack —
-backends, distributed systems, LLM tooling, and occasionally things like this.
-
-Built this in Go, which I'd never used before. That was the point.
-
-McMaster University
-B.Eng. Software Engineering (Co-op) · Expected 2029`

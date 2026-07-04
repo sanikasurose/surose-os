@@ -512,23 +512,48 @@ Built [Project Name] — [one sentence description]
 
 ## About
 
+Content lives directly in `internal/ui/about.go`, organized into sections.
+
 ```
 Sanika Surose
 Software Engineer · McMaster University, Class of 2029
 
-Currently a Software Engineer Intern at TranQuility Inc., building backend APIs,
-automation workflows, and full-stack features with FastAPI and React/Next.js.
-Also an Undergraduate Research Assistant at McMaster, fine-tuning transformer-based
-NLP models and building reproducible ML pipelines under Dr. Charles Welch.
+── now ──────────────────────────────────────────────
+i'm a Software Engineer Intern at TranQuility Inc., an AI startup, where I
+build backend APIs, RAG data pipelines, and full-stack features using
+FastAPI, React, and Azure. My work has included shipping a production RAG
+pipeline (Python + Qdrant) spanning multiple document formats, cutting AI
+feature costs significantly through model and token optimization,
+resolving a production outage caused by async I/O bottlenecks, and
+migrating our deployment workflow from a multi-step manual process to a
+streamlined Azure Container Registry pipeline.
 
-Second-year Software Engineering co-op student. I work across the stack —
-backends, distributed systems, LLM tooling, and occasionally things like this.
+i'm also an Undergraduate Research Assistant at McMaster University under
+Dr. Charles Welch, working on NLP and LLM evaluation. I've built a crash-
+safe, resumable inference pipeline serving Qwen3-8B via vLLM on a 4×H100
+GPU cluster, and designed zero-shot and few-shot emotion classification
+experiments on the GoEmotions dataset, benchmarking model performance
+across prompting strategies.
 
-Built this in Go, which I'd never used before. That was the point.
+── how ──────────────────────────────────────────────
+third-year software engineering co-op student. i work across
+the stack — backends, distributed systems, LLM tooling, and
+occasionally things like this.
 
-McMaster University
-B.Eng. Software Engineering (Co-op) · Expected 2029
+── elsewhere ────────────────────────────────────────
+sponsorship exec for DeltaHacks, McMaster's largest hackathon with 600+
+attendees. embedded subteam for McMaster Aerial Robotics and Drone Club,
+competing in the AEAC Student UAS Competition. building on the software
+subteam for McMaster Design League, McMaster's largest CAD-a-thon. outreach
+for McMaster Advanced Space Systems.
+
+── education ────────────────────────────────────────
+McMaster University                B.Eng. software engineering (co-op) · 2029
+
+built this in Go, which i'd never used before. that was the point.
 ```
+
+Note: `now`, `how`, and `elsewhere` sections all use the same left accent-bar (`Quote`) styling for visual consistency.
 
 ---
 
