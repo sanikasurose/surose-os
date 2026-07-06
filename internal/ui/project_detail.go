@@ -8,6 +8,7 @@ import (
 
 	"github.com/aymanbagabas/go-osc52/v2"
 	"github.com/charmbracelet/glamour"
+	"github.com/muesli/termenv"
 	"github.com/sanikasurose/surose-os/internal/content"
 )
 
@@ -32,8 +33,12 @@ func NewProjectDetailModel(p content.Project) ProjectDetailModel {
 // renderMarkdown uses the embedded surose.json Glamour theme so the markdown
 // body picks up the same palette as the rest of the app.
 func renderMarkdown(src string) string {
+	// Glamour defaults to termenv.TrueColor internally regardless of the
+	// app's own profile (see main.go's lipgloss.SetColorProfile) — set it
+	// explicitly here too, or this renderer alone reverts to truecolor.
 	r, err := glamour.NewTermRenderer(
 		glamour.WithStylesFromJSONBytes(glamourStyleJSON),
+		glamour.WithColorProfile(termenv.ANSI256),
 		glamour.WithWordWrap(80),
 	)
 	if err != nil {
@@ -41,6 +46,7 @@ func renderMarkdown(src string) string {
 		// the body will still render, just not on-palette.
 		r, err = glamour.NewTermRenderer(
 			glamour.WithStandardStyle("dark"),
+			glamour.WithColorProfile(termenv.ANSI256),
 			glamour.WithWordWrap(80),
 		)
 		if err != nil {
