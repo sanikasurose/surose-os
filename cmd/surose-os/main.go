@@ -34,10 +34,12 @@ const (
 
 func main() {
 	// Server runs headless under systemd with no TERM set, so lipgloss's
-	// default profile detection (which reads the server's own env, not each
-	// SSH client's) would fall back to no color. The palette is exact hex,
-	// so force truecolor globally rather than per-session detection.
-	lipgloss.SetColorProfile(termenv.TrueColor)
+	// default profile detection (server env, not each SSH client) would fall
+	// back to no color — force a profile globally instead. ANSI256, not
+	// TrueColor: TERM=xterm-256color (what most clients report) only
+	// promises 256-color, and truecolor renders inaccurately on some clients
+	// that accept it anyway (confirmed washed-out on Apple's Terminal.app).
+	lipgloss.SetColorProfile(termenv.ANSI256)
 
 	dataDir := envOr("SUROSE_DATA_DIR", defaultDataDir)
 	if err := os.MkdirAll(dataDir, 0o755); err != nil {
