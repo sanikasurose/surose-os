@@ -28,6 +28,7 @@ func (m ProjectsMenuModel) View(width int) string {
 	var sb strings.Builder
 	pad := strings.Repeat(" ", ScreenLeftPad)
 
+	sb.WriteString(strings.Repeat("\n", ScreenTopPad))
 	sb.WriteString(ScreenHeader("projects", "hisanika ╱ projects", width))
 	sb.WriteString("\n")
 	sb.WriteString(strings.Repeat(" ", ScreenLeftPad+2))
@@ -130,6 +131,7 @@ func (m ProjectsModel) View(width int) string {
 		catLabel = "personal projects"
 	}
 	breadcrumb := "hisanika ╱ projects ╱ " + catLabel
+	sb.WriteString(strings.Repeat("\n", ScreenTopPad))
 	sb.WriteString(ScreenHeader("projects ╴ "+catLabel, breadcrumb, width))
 	sb.WriteString("\n")
 

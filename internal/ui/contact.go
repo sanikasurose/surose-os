@@ -16,6 +16,7 @@ func (m ContactModel) View(width int) string {
 
 	pad := strings.Repeat(" ", ScreenLeftPad)
 
+	sb.WriteString(strings.Repeat("\n", ScreenTopPad))
 	sb.WriteString(ScreenHeader("contact", "hisanika ╱ contact", width))
 	sb.WriteString("\n")
 

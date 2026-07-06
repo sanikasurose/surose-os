@@ -101,6 +101,7 @@ func (m HomeModel) View(width int) string {
 	if m.snapshot.Visitor > 0 {
 		bc += fmt.Sprintf("  ·  visitor #%d", m.snapshot.Visitor)
 	}
+	sb.WriteString(strings.Repeat("\n", ScreenTopPad))
 	sb.WriteString(ScreenHeader("home", bc, width))
 	sb.WriteString("\n\n")
 

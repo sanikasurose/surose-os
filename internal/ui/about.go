@@ -106,7 +106,7 @@ func (m AboutModel) View(width, height int) string {
 	// itself — not just one line). Without this, printing more rows than
 	// the terminal has causes the terminal itself to scroll — dragging the
 	// (fixed) header above off-screen along with it.
-	topStr := header + "\n\n"
+	topStr := strings.Repeat("\n", ScreenTopPad) + header + "\n\n"
 	footerStr := "\n" + HelpHint("j/k scroll", "esc back")
 	topLines := strings.Count(topStr, "\n")
 	footerLines := strings.Count(footerStr, "\n") + 1

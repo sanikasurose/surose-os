@@ -66,7 +66,7 @@ func (m ProjectDetailModel) View(width, height int) string {
 	var top strings.Builder
 
 	// Top: back-hint row.
-	top.WriteString("\n")
+	top.WriteString(strings.Repeat("\n", ScreenTopPad))
 	top.WriteString(strings.Repeat(" ", ScreenLeftPad))
 	top.WriteString(GhostText.Render("╴╴ back"))
 	top.WriteString("\n\n")

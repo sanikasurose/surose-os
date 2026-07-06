@@ -177,6 +177,7 @@ func (m GuestbookModel) View(width, height int) string {
 
 	count := len(m.messages)
 	bc := fmt.Sprintf("hisanika ╱ guestbook  ·  %d messages", count)
+	sb.WriteString(strings.Repeat("\n", ScreenTopPad))
 	sb.WriteString(ScreenHeader("guestbook", bc, width))
 	sb.WriteString("\n")
 	sb.WriteString(strings.Repeat(" ", ScreenLeftPad+2))
@@ -194,7 +195,7 @@ func (m GuestbookModel) View(width, height int) string {
 	// Reserve space at the bottom for the input area (subsection + spacer +
 	// input + spacer + status + hint) — about 6 lines.
 	reserved := 8
-	available := height - 6 - reserved // 6 = header + handle + padding
+	available := height - 6 - ScreenTopPad - reserved // 6 = header + handle + padding
 	if available < 6 {
 		available = 6
 	}
