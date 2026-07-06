@@ -322,12 +322,18 @@ func Breadcrumb(parts ...string) string {
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ContributionLevelColors — 5 stops from empty → bright green.
+// Given as explicit ANSI256 palette indices (not hex): the app forces an
+// ANSI256 color profile globally (see cmd/surose-os/main.go), and letting
+// these GitHub-hex greens auto-round to their nearest 256-color equivalent
+// picked entries with a blue tint. These indices are pure green (zero blue
+// component) from the 256 color cube, so the ramp renders unambiguously
+// green on every client instead of drifting blue.
 var ContributionLevelColors = [5]string{
-	"#1F2329", // 0 - empty
-	"#0E4429", // 1 - dim
-	"#006D32", // 2
-	"#26A641", // 3
-	"#39D353", // 4 - bright
+	"236", // 0 - empty
+	"22",  // 1 - dim
+	"28",  // 2
+	"34",  // 3
+	"40",  // 4 - bright
 }
 
 // Pre-built per-level cell styles so the grid render doesn't allocate per cell.
