@@ -134,13 +134,14 @@ func (m ProjectDetailModel) View(width, height int) string {
 	bottomStr := bottom.String()
 
 	// Bound the scrollable body to what actually fits: height, minus the
-	// fixed rows above and below it, minus 1 for the hisanika> bar RootModel
-	// appends after this View returns. Without this, printing more rows than
+	// fixed rows above and below it, minus 2 for the hisanika> bar RootModel
+	// appends after this View returns (a divider row plus the prompt row
+	// itself — not just one line). Without this, printing more rows than
 	// the terminal has causes the terminal itself to scroll — dragging the
 	// (fixed) header above off-screen along with it.
 	topLines := strings.Count(topStr, "\n")
 	bottomLines := strings.Count(bottomStr, "\n") + 1
-	available := height - topLines - bottomLines - 1
+	available := height - topLines - bottomLines - 2
 	if available < 3 {
 		available = 3
 	}
