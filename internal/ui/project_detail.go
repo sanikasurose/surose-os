@@ -96,6 +96,7 @@ func (m ProjectDetailModel) View(width, height int) string {
 		visible = m.lines[m.scrollTop:]
 	}
 	for _, l := range visible {
+		sb.WriteString(strings.Repeat(" ", ScreenLeftPad))
 		sb.WriteString(l)
 		sb.WriteString("\n")
 	}
