@@ -6,31 +6,13 @@ Most engineering portfolios are a templated website or a GitHub profile with a f
 
 A browser version with the same visual identity is being built separately and will share this project's domain once both are ready.
 
-## Try it locally
+## Try it
 
-Production isn't live yet — DNS for the SSH endpoint is intentionally not pointed at the domain until the web version is ready to launch alongside it. For now, run it yourself:
-
-```bash
-git clone https://github.com/sanikasurose/surose-os.git
-cd surose-os
-make run
+```
+ssh enter@sanikasurose.com
 ```
 
-In another terminal:
-
-```bash
-ssh enter@localhost -p 2222
-```
-
-Requires Go. Wish generates a host key on first run (`.ssh/id_ed25519`). Optionally set `GITHUB_TOKEN` (and `GITHUB_USER`) in `.env` to populate the contribution grid on the Home screen.
-
-To build a Linux binary:
-
-```bash
-make build
-```
-
-(Production deploy on `sanikasurose.com` is in progress — this section will be updated once it's live.)
+Coming soon — this entry point goes live once the browser version above is ready to launch alongside it.
 
 ## Navigating
 
