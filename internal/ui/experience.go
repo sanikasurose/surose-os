@@ -96,19 +96,38 @@ func (m ExperienceModel) View(width, height int) string {
 		}
 	}
 
-	// Apply scroll.
-	visible := lines
-	if m.scrollTop < len(lines) {
-		visible = lines[m.scrollTop:]
+	// Bound the scrollable body to what actually fits: height, minus the
+	// header above and footer below, minus 1 for the hisanika> bar RootModel
+	// appends after this View returns. Without this, printing more rows than
+	// the terminal has causes the terminal itself to scroll — dragging the
+	// (fixed) header above off-screen along with it.
+	topStr := header + "\n\n"
+	footerStr := "\n" + HelpHint("j/k scroll", "esc back")
+	topLines := strings.Count(topStr, "\n")
+	footerLines := strings.Count(footerStr, "\n") + 1
+	available := height - topLines - footerLines - 1
+	if available < 3 {
+		available = 3
 	}
 
+	if m.scrollTop > len(lines)-available {
+		m.scrollTop = len(lines) - available
+	}
+	if m.scrollTop < 0 {
+		m.scrollTop = 0
+	}
+	end := m.scrollTop + available
+	if end > len(lines) {
+		end = len(lines)
+	}
+	visible := lines[m.scrollTop:end]
+
 	var sb strings.Builder
-	sb.WriteString(header + "\n\n")
+	sb.WriteString(topStr)
 	for _, l := range visible {
 		sb.WriteString(l + "\n")
 	}
-	sb.WriteString("\n")
-	sb.WriteString(HelpHint("j/k scroll", "esc back"))
+	sb.WriteString(footerStr)
 
 	return sb.String()
 }

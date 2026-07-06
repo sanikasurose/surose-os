@@ -61,21 +61,22 @@ func renderMarkdown(src string) string {
 }
 
 func (m ProjectDetailModel) View(width, height int) string {
-	var sb strings.Builder
 	p := m.project
 
+	var top strings.Builder
+
 	// Top: back-hint row.
-	sb.WriteString("\n")
-	sb.WriteString(strings.Repeat(" ", ScreenLeftPad))
-	sb.WriteString(GhostText.Render("╴╴ back"))
-	sb.WriteString("\n\n")
+	top.WriteString("\n")
+	top.WriteString(strings.Repeat(" ", ScreenLeftPad))
+	top.WriteString(GhostText.Render("╴╴ back"))
+	top.WriteString("\n\n")
 
 	// Title row with accent bar.
-	sb.WriteString(strings.Repeat(" ", ScreenLeftPad))
-	sb.WriteString(AccentBar.Render(GlyphAccentBar))
-	sb.WriteString(" ")
-	sb.WriteString(ProjectTitle.Render(p.Title))
-	sb.WriteString("\n")
+	top.WriteString(strings.Repeat(" ", ScreenLeftPad))
+	top.WriteString(AccentBar.Render(GlyphAccentBar))
+	top.WriteString(" ")
+	top.WriteString(ProjectTitle.Render(p.Title))
+	top.WriteString("\n")
 
 	// Meta row: year · category · event · location.
 	meta := p.Year
@@ -85,58 +86,85 @@ func (m ProjectDetailModel) View(width, height int) string {
 	if p.Location != "" {
 		meta = fmt.Sprintf("%s · %s", meta, p.Location)
 	}
-	sb.WriteString(strings.Repeat(" ", ScreenLeftPad+2))
-	sb.WriteString(MetadataLabel.Render(meta))
-	sb.WriteString("\n\n")
+	top.WriteString(strings.Repeat(" ", ScreenLeftPad+2))
+	top.WriteString(MetadataLabel.Render(meta))
+	top.WriteString("\n\n")
 
 	// Tag row — bracketed annotation style.
 	if len(p.Tags) > 0 {
-		sb.WriteString(strings.Repeat(" ", ScreenLeftPad+2))
-		sb.WriteString(Tags(p.Tags))
-		sb.WriteString("\n\n")
+		top.WriteString(strings.Repeat(" ", ScreenLeftPad+2))
+		top.WriteString(Tags(p.Tags))
+		top.WriteString("\n\n")
 	}
 
-	// Glamour-rendered markdown body (scrollable).
-	visible := m.lines
-	if m.scrollTop < len(m.lines) {
-		visible = m.lines[m.scrollTop:]
+	var bottom strings.Builder
+
+	// Link footer.
+	if len(p.Links) > 0 {
+		bottom.WriteString("\n")
+		bottom.WriteString(strings.Repeat(" ", ScreenLeftPad))
+		bottom.WriteString(SectionLabel("links"))
+		bottom.WriteString("\n\n")
+		for _, link := range p.Links {
+			bottom.WriteString(strings.Repeat(" ", ScreenLeftPad+2))
+			bottom.WriteString(AccentText.Render(GlyphArrow))
+			bottom.WriteString("  ")
+			bottom.WriteString(MetadataLabel.Render(link.Label))
+			bottom.WriteString("   ")
+			bottom.WriteString(BodyText.Render(normalizeURL(link.URL)))
+			bottom.WriteString("\n")
+		}
 	}
+
+	if m.statusMsg != "" {
+		bottom.WriteString("\n")
+		bottom.WriteString(strings.Repeat(" ", ScreenLeftPad))
+		if strings.HasPrefix(m.statusMsg, "copied") {
+			bottom.WriteString(SuccessText.Render(m.statusMsg))
+		} else {
+			bottom.WriteString(MetadataLabel.Render(m.statusMsg))
+		}
+		bottom.WriteString("\n")
+	}
+
+	bottom.WriteString("\n")
+	bottom.WriteString(HelpHint("j/k scroll", "o copy link", "esc back"))
+
+	topStr := top.String()
+	bottomStr := bottom.String()
+
+	// Bound the scrollable body to what actually fits: height, minus the
+	// fixed rows above and below it, minus 1 for the hisanika> bar RootModel
+	// appends after this View returns. Without this, printing more rows than
+	// the terminal has causes the terminal itself to scroll — dragging the
+	// (fixed) header above off-screen along with it.
+	topLines := strings.Count(topStr, "\n")
+	bottomLines := strings.Count(bottomStr, "\n") + 1
+	available := height - topLines - bottomLines - 1
+	if available < 3 {
+		available = 3
+	}
+
+	if m.scrollTop > len(m.lines)-available {
+		m.scrollTop = len(m.lines) - available
+	}
+	if m.scrollTop < 0 {
+		m.scrollTop = 0
+	}
+	end := m.scrollTop + available
+	if end > len(m.lines) {
+		end = len(m.lines)
+	}
+	visible := m.lines[m.scrollTop:end]
+
+	var sb strings.Builder
+	sb.WriteString(topStr)
 	for _, l := range visible {
 		sb.WriteString(strings.Repeat(" ", ScreenLeftPad))
 		sb.WriteString(l)
 		sb.WriteString("\n")
 	}
-
-	// Link footer.
-	if len(p.Links) > 0 {
-		sb.WriteString("\n")
-		sb.WriteString(strings.Repeat(" ", ScreenLeftPad))
-		sb.WriteString(SectionLabel("links"))
-		sb.WriteString("\n\n")
-		for _, link := range p.Links {
-			sb.WriteString(strings.Repeat(" ", ScreenLeftPad+2))
-			sb.WriteString(AccentText.Render(GlyphArrow))
-			sb.WriteString("  ")
-			sb.WriteString(MetadataLabel.Render(link.Label))
-			sb.WriteString("   ")
-			sb.WriteString(BodyText.Render(normalizeURL(link.URL)))
-			sb.WriteString("\n")
-		}
-	}
-
-	if m.statusMsg != "" {
-		sb.WriteString("\n")
-		sb.WriteString(strings.Repeat(" ", ScreenLeftPad))
-		if strings.HasPrefix(m.statusMsg, "copied") {
-			sb.WriteString(SuccessText.Render(m.statusMsg))
-		} else {
-			sb.WriteString(MetadataLabel.Render(m.statusMsg))
-		}
-		sb.WriteString("\n")
-	}
-
-	sb.WriteString("\n")
-	sb.WriteString(HelpHint("j/k scroll", "o copy link", "esc back"))
+	sb.WriteString(bottomStr)
 
 	return sb.String()
 }
