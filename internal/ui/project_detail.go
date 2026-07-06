@@ -110,6 +110,7 @@ func (m ProjectDetailModel) View(width, height int) string {
 	// Link footer.
 	if len(p.Links) > 0 {
 		sb.WriteString("\n")
+		sb.WriteString(strings.Repeat(" ", ScreenLeftPad))
 		sb.WriteString(SectionLabel("links"))
 		sb.WriteString("\n\n")
 		for _, link := range p.Links {
