@@ -17,9 +17,9 @@ func (m AboutModel) View(width, height int) string {
 	pad := strings.Repeat(" ", ScreenLeftPad)
 	indent := strings.Repeat(" ", ScreenLeftPad+2)
 
-	// Header.
-	add(ScreenHeader("about", "hisanika ╱ about", width))
-	add("")
+	// Header — kept outside the scrollable `lines` slice below so it stays
+	// pinned to the top of the screen instead of scrolling away.
+	header := ScreenHeader("about", "hisanika ╱ about", width)
 
 	// Name + subtitle.
 	add(pad + ScreenTitle.Render("Sanika Surose"))
@@ -107,6 +107,7 @@ func (m AboutModel) View(width, height int) string {
 	}
 
 	var sb strings.Builder
+	sb.WriteString(header + "\n\n")
 	for _, l := range visible {
 		sb.WriteString(l + "\n")
 	}

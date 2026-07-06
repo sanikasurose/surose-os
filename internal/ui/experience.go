@@ -19,9 +19,9 @@ func (m ExperienceModel) View(width, height int) string {
 
 	indent := strings.Repeat(" ", ScreenLeftPad+2)
 
-	// Header — no extra leading blank since ScreenHeader is the first thing.
-	add(ScreenHeader("experience", "hisanika ╱ experience", width))
-	add("")
+	// Header — kept outside the scrollable `lines` slice below so it stays
+	// pinned to the top of the screen instead of scrolling away.
+	header := ScreenHeader("experience", "hisanika ╱ experience", width)
 
 	// Partition into work and hackathon groups.
 	var workEntries []content.ExperienceEntry
@@ -103,6 +103,7 @@ func (m ExperienceModel) View(width, height int) string {
 	}
 
 	var sb strings.Builder
+	sb.WriteString(header + "\n\n")
 	for _, l := range visible {
 		sb.WriteString(l + "\n")
 	}
