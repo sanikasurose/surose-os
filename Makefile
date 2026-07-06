@@ -1,4 +1,4 @@
-.PHONY: run build tidy deploy logs ssh
+.PHONY: run build tidy deploy logs ssh stats
 
 DEPLOY_HOST := root@157.245.255.166
 DEPLOY_PORT := 2200
@@ -24,3 +24,6 @@ logs:
 
 ssh:
 	ssh -i $(DEPLOY_KEY) -p $(DEPLOY_PORT) $(DEPLOY_HOST)
+
+stats:
+	ssh -i $(DEPLOY_KEY) -p $(DEPLOY_PORT) $(DEPLOY_HOST) "sqlite3 /home/surose/surose-os/data/sessions.db 'SELECT COUNT(*) AS total_visits, COUNT(DISTINCT visitor_hash) AS unique_visitors, CAST(AVG(disconnected_at - connected_at) AS INTEGER) AS avg_session_seconds FROM visits WHERE disconnected_at IS NOT NULL;'"

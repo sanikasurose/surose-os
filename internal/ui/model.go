@@ -2,12 +2,70 @@ package ui
 
 import (
 	"strings"
+	"sync"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/sanikasurose/surose-os/internal/content"
 	"github.com/sanikasurose/surose-os/internal/guestbook"
 	"github.com/sanikasurose/surose-os/internal/stats"
 )
+
+// screenRecorder buffers the sequence of screens visited during one SSH
+// session so the handler can flush it to analytics once, on disconnect,
+// rather than writing to the db on every navigation keystroke.
+type screenRecorder struct {
+	mu      sync.Mutex
+	screens []string
+}
+
+func newScreenRecorder() *screenRecorder { return &screenRecorder{} }
+
+func (r *screenRecorder) Append(name string) {
+	if r == nil {
+		return
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.screens = append(r.screens, name)
+}
+
+// Snapshot returns a copy of the screens visited so far — safe to call from
+// the handler's disconnect goroutine after the session's context is done.
+func (r *screenRecorder) Snapshot() []string {
+	if r == nil {
+		return nil
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	out := make([]string, len(r.screens))
+	copy(out, r.screens)
+	return out
+}
+
+func screenName(s screen) string {
+	switch s {
+	case screenBoot:
+		return "boot"
+	case screenHome:
+		return "home"
+	case screenProjectsMenu:
+		return "projects_menu"
+	case screenProjects:
+		return "projects"
+	case screenProjectDetail:
+		return "project_detail"
+	case screenExperience:
+		return "experience"
+	case screenAbout:
+		return "about"
+	case screenContact:
+		return "contact"
+	case screenGuestbook:
+		return "guestbook"
+	default:
+		return "unknown"
+	}
+}
 
 type screen int
 
@@ -42,11 +100,14 @@ type RootModel struct {
 	promptFocused bool
 	promptInput   string
 	promptOutput  string
+
+	recorder *screenRecorder
 }
 
-// NewRootModel takes the per-session stats snapshot AND the shared guestbook
-// store. Both come from the handler (see handler.go MakeHandler).
-func NewRootModel(snap stats.Snapshot, gb *guestbook.Store) RootModel {
+// NewRootModel takes the per-session stats snapshot, the shared guestbook
+// store, and the session's screen recorder (nil disables analytics — see
+// handler.go MakeHandler).
+func NewRootModel(snap stats.Snapshot, gb *guestbook.Store, recorder *screenRecorder) RootModel {
 	handle := visitorHandle(snap.Visitor)
 	return RootModel{
 		current:      screenBoot,
@@ -58,6 +119,7 @@ func NewRootModel(snap stats.Snapshot, gb *guestbook.Store) RootModel {
 		about:        NewAboutModel(),
 		contact:      NewContactModel(),
 		guestbook:    NewGuestbookModel(gb, handle),
+		recorder:     recorder,
 	}
 }
 
@@ -85,7 +147,19 @@ func (m RootModel) Init() tea.Cmd {
 	return m.boot.Init()
 }
 
+// Update routes to updateInner, then records screen transitions for
+// analytics — buffered in-memory via m.recorder, flushed once at disconnect.
 func (m RootModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	prev := m.current
+	newModel, cmd := m.updateInner(msg)
+	nm := newModel.(RootModel)
+	if nm.current != prev {
+		nm.recorder.Append(screenName(nm.current))
+	}
+	return nm, cmd
+}
+
+func (m RootModel) updateInner(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
 	case tea.WindowSizeMsg:

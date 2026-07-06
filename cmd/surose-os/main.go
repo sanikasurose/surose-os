@@ -16,6 +16,7 @@ import (
 	"github.com/charmbracelet/wish"
 	"github.com/charmbracelet/wish/bubbletea"
 	"github.com/muesli/termenv"
+	"github.com/sanikasurose/surose-os/internal/analytics"
 	"github.com/sanikasurose/surose-os/internal/guestbook"
 	"github.com/sanikasurose/surose-os/internal/stats"
 	"github.com/sanikasurose/surose-os/internal/ui"
@@ -60,6 +61,16 @@ func main() {
 		log.Printf("guestbook: %s (%d messages)", guestbookPath, n)
 	}
 
+	analyticsPath := filepath.Join(dataDir, "sessions.db")
+	an, err := analytics.Open(analyticsPath)
+	if err != nil {
+		log.Fatalf("could not open analytics db at %s: %v", analyticsPath, err)
+	}
+	defer an.Close()
+	if n, err := an.Count(); err == nil {
+		log.Printf("analytics: %s (%d sessions recorded)", analyticsPath, n)
+	}
+
 	githubUser := envOr("GITHUB_USER", "sanikasurose")
 	githubToken := os.Getenv("GITHUB_TOKEN")
 	cache := stats.NewCache(githubUser, githubToken)
@@ -86,6 +97,7 @@ func main() {
 		Stats:     cache,
 		Visitors:  visitors,
 		Guestbook: gb,
+		Analytics: an,
 	})
 
 	s, err := wish.NewServer(
