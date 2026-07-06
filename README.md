@@ -1,18 +1,14 @@
 # Surose OS
 
-An SSH portfolio. Connect and you get a terminal app — projects, experience, about, guestbook, contact — not a shell.
+An SSH-accessible portfolio. `ssh` in and you get a navigable terminal application — projects, experience, about, guestbook, contact — instead of a shell.
 
-```
-ssh enter@sanikasurose.com   # production (after Phase 4 deploy)
-```
+Most engineering portfolios are a templated website or a GitHub profile with a few pinned repos. Neither says much about how the person actually builds things. This one is a small system: an SSH server, a hand-rolled TUI, and a visual identity designed to look nothing like a system log. The format is part of the pitch.
 
-**Status:** Phases 1–3 complete. **Remaining:** production deploy (no `-p` flag). A browser version with the same visual identity is in progress as a separate project before launch.
+A browser version with the same visual identity is being built separately and will share this project's domain once both are ready.
 
-## Built with
+## Try it locally
 
-Go · [Wish](https://github.com/charmbracelet/wish) · [Bubbletea](https://github.com/charmbracelet/bubbletea) · [Lipgloss](https://github.com/charmbracelet/lipgloss) · [Glamour](https://github.com/charmbracelet/glamour)
-
-## Run locally
+Production isn't live yet — DNS for the SSH endpoint is intentionally not pointed at the domain until the web version is ready to launch alongside it. For now, run it yourself:
 
 ```bash
 git clone https://github.com/sanikasurose/surose-os.git
@@ -26,9 +22,7 @@ In another terminal:
 ssh enter@localhost -p 2222
 ```
 
-Requires Go. Wish generates the host key on first run (`.ssh/id_ed25519`).
-
-Optional: create `.env` with `GITHUB_TOKEN` for the Home contribution grid (see `.env.example` if present).
+Requires Go. Wish generates a host key on first run (`.ssh/id_ed25519`). Optionally set `GITHUB_TOKEN` (and `GITHUB_USER`) in `.env` to populate the contribution grid on the Home screen.
 
 To build a Linux binary:
 
@@ -36,43 +30,45 @@ To build a Linux binary:
 make build
 ```
 
-## Keyboard navigation
+(Production deploy on `sanikasurose.com` is in progress — this section will be updated once it's live.)
+
+## Navigating
+
+Every screen shares the same core keys:
 
 | Key | Action |
 |-----|--------|
-| `j` / `↓` | Move down |
-| `k` / `↑` | Move up |
+| `↑` / `k` | Move selection / scroll up |
+| `↓` / `j` | Move selection / scroll down |
 | `Enter` | Select / open |
-| `1`–`5` | Home → About, Experience, Projects, Guestbook, Contact |
 | `Esc` | Back one screen |
-| `q` | Quit |
-| `:` | Open `hisanika>` command prompt |
-| `Ctrl+C` | Quit |
+| `q` / `Ctrl+C` | Quit, from anywhere |
+| `:` | Open the `hisanika>` command prompt |
 
-**Home:** `1` about · `2` experience · `3` projects · `4` guestbook · `5` contact
+**Home** — `1` about · `2` experience · `3` projects · `4` guestbook · `5` contact (or use the arrows and `Enter`).
 
-**Projects:** menu (`1` hackathons · `2` personal) → list → detail. On detail, `o` copies the first link.
+**Projects** — a menu (`1` hackathons, `2` personal projects) leads to a filtered list, which leads to a project's detail page. On a detail page, `o` copies the project's first link to your clipboard.
 
-**Prompt** (`:` then type, Enter to run)
+**Guestbook** is the one exception: typing goes straight into the message box instead of triggering commands, so `:` doesn't open the prompt there, and `Esc` only backs out to Home once the input is empty.
 
-| Command | Action |
-|---------|--------|
-| `help` | List commands |
-| `projects` | Projects menu |
-| `experience` | Experience screen |
-| `about` | About screen |
-| `guestbook` | Guestbook screen |
-| `contact` | Contact screen |
-| `open <slug>` | Jump to project detail |
-| `clear` | Clear prompt output |
+### The `hisanika>` prompt
+
+Press `:` on any screen except the guestbook to drop into a small command line. Type a command and hit `Enter`:
+
+| Command | Does |
+|---------|------|
+| `help` | Lists available commands |
+| `projects` | Jump to the Projects menu |
+| `experience` | Jump to Experience |
+| `about` | Jump to About |
+| `guestbook` | Jump to Guestbook |
+| `contact` | Jump to Contact |
+| `open <slug>` | Open a project's detail page directly (e.g. `open surose-os`) |
+| `clear` | Clear the prompt's output |
 | `quit` / `exit` | Disconnect |
 
-## Docs
+Anything else gets `unknown command. type help for a list.`
 
-- [PLANNING.md](docs/PLANNING.md) — PRD/TRD
-- [NAVIGATION.md](docs/NAVIGATION.md) — keys and commands
-- [CONTENT.md](docs/CONTENT.md) — portfolio copy for `data.go`
+## Built with
 
-## Web
-
-A browser portfolio with the same visual identity is in progress (separate repo). Plan: finish web, then deploy both SSH and web on `sanikasurose.com`.
+Go · [Wish](https://github.com/charmbracelet/wish) · [Bubbletea](https://github.com/charmbracelet/bubbletea) · [Lipgloss](https://github.com/charmbracelet/lipgloss) · [Glamour](https://github.com/charmbracelet/glamour)
