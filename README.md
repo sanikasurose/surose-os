@@ -14,6 +14,8 @@ ssh enter@sanikasurose.com
 
 Coming soon — this entry point goes live once the browser version above is ready to launch alongside it.
 
+First time connecting, your terminal will ask you to confirm the server's identity (a one-time security check every SSH connection does) — type `yes` and you're in.
+
 ## Navigating
 
 Every screen shares the same core keys:
