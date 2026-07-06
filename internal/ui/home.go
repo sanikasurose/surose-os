@@ -93,7 +93,7 @@ func (m HomeModel) Update(msg tea.Msg) (HomeModel, tea.Cmd) {
 	return m, nil
 }
 
-func (m HomeModel) View(width int) string {
+func (m HomeModel) View(width, height int) string {
 	var sb strings.Builder
 
 	// Header — embed visitor number in the breadcrumb (replaces the old stats bar).
@@ -159,7 +159,26 @@ func (m HomeModel) View(width int) string {
 		}
 	}
 
-	return sb.String()
+	out := sb.String()
+
+	// Bound total output to what actually fits: height, minus 2 for the
+	// hisanika> bar RootModel appends after this View returns (a divider row
+	// plus the prompt row itself). Home has no scroll, so instead of letting
+	// the terminal (or bubbletea's renderer) drop rows from the top — which
+	// would cut off the header — trim any overflow from the bottom, where
+	// the least essential content (the contribution grid legend) lives.
+	if height > 0 {
+		maxLines := height - 2
+		if maxLines < 1 {
+			maxLines = 1
+		}
+		lines := strings.Split(out, "\n")
+		if len(lines) > maxLines {
+			out = strings.Join(lines[:maxLines], "\n")
+		}
+	}
+
+	return out
 }
 
 func (m HomeModel) CursorUp() HomeModel {

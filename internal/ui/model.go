@@ -467,7 +467,7 @@ func (m RootModel) View() string {
 	var body string
 	switch m.current {
 	case screenHome:
-		body = m.home.View(m.width)
+		body = m.home.View(m.width, m.height)
 	case screenProjectsMenu:
 		body = m.projectsMenu.View(m.width)
 	case screenProjects:
