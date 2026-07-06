@@ -11,9 +11,11 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	"github.com/charmbracelet/wish/bubbletea"
+	"github.com/muesli/termenv"
 	"github.com/sanikasurose/surose-os/internal/guestbook"
 	"github.com/sanikasurose/surose-os/internal/stats"
 	"github.com/sanikasurose/surose-os/internal/ui"
@@ -30,6 +32,12 @@ const (
 )
 
 func main() {
+	// Server runs headless under systemd with no TERM set, so lipgloss's
+	// default profile detection (which reads the server's own env, not each
+	// SSH client's) would fall back to no color. The palette is exact hex,
+	// so force truecolor globally rather than per-session detection.
+	lipgloss.SetColorProfile(termenv.TrueColor)
+
 	dataDir := envOr("SUROSE_DATA_DIR", defaultDataDir)
 	if err := os.MkdirAll(dataDir, 0o755); err != nil {
 		log.Fatalf("could not create data dir %s: %v", dataDir, err)
