@@ -2,6 +2,7 @@ package ui
 
 import (
 	"log"
+	"net"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/ssh"
@@ -55,11 +56,16 @@ func MakeHandler(d Deps) func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 
 // sessionIdentifier returns a stable string to hash for analytics — the
 // marshaled public key when the client presented one, otherwise the remote
-// address. Never stored raw; only ever passed to analytics.RecordConnect,
-// which hashes it before touching disk.
+// IP (port stripped, since the OS assigns a new ephemeral source port on
+// every connection, which would make every visit look "unique"). Never
+// stored raw; only ever passed to analytics.RecordConnect, which hashes it
+// before touching disk.
 func sessionIdentifier(s ssh.Session) string {
 	if pub := s.PublicKey(); pub != nil {
 		return string(gossh.MarshalAuthorizedKey(pub))
+	}
+	if host, _, err := net.SplitHostPort(s.RemoteAddr().String()); err == nil {
+		return host
 	}
 	return s.RemoteAddr().String()
 }
